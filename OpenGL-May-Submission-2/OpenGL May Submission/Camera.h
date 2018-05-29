@@ -15,12 +15,17 @@ public:
 	void SetCameraFront(glm::vec3 _front);
 	void SetPosition(glm::vec3 _position);
 	glm::vec3 GetFront();
+	glm::mat4 GetViewMatrix();
+	glm::mat4 GetPerspectiveMatrix();
 	glm::vec3 GetPosition();
 	glm::vec3 GetCameraUp();
 	float GetCameraSpeed();
 	void MoveCamera(glm::vec2 _mousePos);
 
 private:
+	glm::mat4 m_viewMatrix;
+	glm::mat4 m_perspectiveMatrix;
+
 	glm::vec3 m_cameraPos;
 	glm::vec3 m_cameraFront;
 	glm::vec3 m_cameraUp;

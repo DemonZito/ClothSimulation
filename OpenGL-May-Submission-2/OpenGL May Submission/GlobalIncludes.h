@@ -31,6 +31,21 @@
 static const float g_kfTimeStep = 0.25f;
 static const int g_kiConstraintIterations = 15;
 
+struct Triangle
+{
+	Triangle(glm::vec3 _p0, glm::vec3 _p1, glm::vec3 _p2)
+	{
+		P0 = _p0;
+		P1 = _p1;
+		P2 = _p2;
+	}
+
+	Triangle(){}
+	glm::vec3 P0;
+	glm::vec3 P1;
+	glm::vec3 P2;
+};
+
 // Vertex structure of models
 struct Vertice
 {

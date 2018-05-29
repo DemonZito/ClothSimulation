@@ -10,6 +10,74 @@ Game& Game::GetInstance()
 	return instance;
 }
 
+bool Game::UpdateMousePicking()
+{
+	//screen pos
+	glm::vec2 normalizedScreenPos = glm::vec2(0, 0);
+
+	//screenpos to Proj Space
+	glm::vec4 clipCoords = glm::vec4(normalizedScreenPos.x, normalizedScreenPos.y, -1.0f, 1.0f);
+
+	//Proj Space to eye space
+	glm::mat4 invProjMat = glm::inverse(m_pCamera->GetPerspectiveMatrix());
+	glm::vec4 eyeCoords = invProjMat * clipCoords;
+	eyeCoords = glm::vec4(eyeCoords.x, eyeCoords.y, -1.0f, 0.0f);
+
+	//eyespace to world space
+	glm::mat4 invViewMat = glm::inverse(m_pCamera->GetViewMatrix());
+	glm::vec4 rayWorld = invViewMat * eyeCoords;
+	m_mouseRayDirection = glm::normalize(glm::vec3(rayWorld));
+
+
+	// Check intersection
+	std::vector<Triangle> triangles = m_pCloth->GetTriangles();
+
+
+	const float EPSILON = 0.0000001f;
+
+	for (unsigned int i = 0; i < triangles.size(); i++)
+	{
+		glm::vec3 edge1, edge2, h, s, q;
+		float a, f, u, v;
+		edge1 = triangles[i].P1 - triangles[i].P0;
+		edge2 = triangles[i].P2 - triangles[i].P0;
+		h = glm::cross(m_mouseRayDirection, edge2);
+		a = glm::dot(edge1, h);
+
+		if (a > -EPSILON && a < EPSILON)
+			continue;
+
+		f = 1 / a;
+		s = m_pCamera->GetPosition() - triangles[i].P0;
+		u = f * (glm::dot(s, h));
+
+		if (u < 0.0 || u > 1.0)
+			continue;
+
+		q = glm::cross(s, edge1);
+		v = f * glm::dot(m_mouseRayDirection, q);
+		if (v < 0.0 || u + v > 1.0)
+			continue;
+
+		// At this stage we can compute t to find out where the intersection point is on the line.
+		float t = f * glm::dot(edge2, q);
+
+		if (t > EPSILON) // ray intersection
+		{
+			glm::vec3 outIntersectionPoint = m_pCamera->GetPosition() + m_mouseRayDirection * t;
+			std::cout << "x: " << outIntersectionPoint.x << ", ";
+			std::cout << "y: " << outIntersectionPoint.y << ", ";
+			std::cout << "z: " << outIntersectionPoint.z << std::endl;
+			//m_pCloth->SwitchColorMode();
+
+			return true;
+		}
+	}
+
+}
+
+
+
 bool Game::Initialize()
 {
 	m_bGameOver = false;
@@ -84,7 +152,7 @@ bool Game::Initialize()
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 
-	clothyBoy = new Cloth(20, 20, 20, 20, g_mapShaders[UNLIT_STANDARD]);
+	m_pCloth = new Cloth(2, 2, g_mapShaders[UNLIT_STANDARD]);
 	textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
 	sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
 
@@ -118,7 +186,7 @@ void Game::Render() const
 		m_vecObjects[i]->Render();
 
 	m_pPlayer->Render();
-	clothyBoy->Render();
+	m_pCloth->Render();
 	textLavel->Render();
 	sprit->Render();
 	//m_pPostProcessing->Draw();
@@ -131,23 +199,26 @@ void Game::Update()
 	glfwPollEvents();
 	HandleMouseInput();
 	HandleKeyboardInput();
-	clothyBoy->AddForce(glm::vec3(0.0f, -0.5f, sin(glfwGetTime()) * .5f)*g_kfTimeStep);
-	clothyBoy->Step();
+	//m_pCloth->AddForce(glm::vec3(0.0f, -0.5f, sin(glfwGetTime()) * .5f)*g_kfTimeStep);
+	m_pCloth->Step();
 	Input::Instance().Clear();
 
 }
 
 void Game::HandleMouseInput()
 {
-	glm::vec2 mousePos = Input::Instance().MousePosition();
+	m_mousePos = Input::Instance().MousePosition();
 	// If mouse has moved and camera exists
-	if (!(mousePos.x == 400 && mousePos.y == 400) && m_pCamera != nullptr)
+	if (!(m_mousePos.x == 400 && m_mousePos.y == 400) && m_pCamera != nullptr)
 	{
-		m_pCamera->MoveCamera(mousePos);
+		m_pCamera->MoveCamera(m_mousePos);
 
 		// Reset mouse to center
 		glfwSetCursorPos(m_pWindow, 400, 400);
 	}
+
+	if (glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
+		UpdateMousePicking();
 }
 
 void Game::HandleKeyboardInput()

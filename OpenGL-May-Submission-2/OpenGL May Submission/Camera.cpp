@@ -21,10 +21,11 @@ void CCamera::GetUniformLocation(GLuint _shaders)
 
 void CCamera::SendDataToShaders(std::unordered_map<ShaderType, GLuint> _shaders)
 {
-	float aspectRatio = static_cast<float>(800.0f / 800.0f);
-	glm::mat4 View = glm::lookAtRH(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
+	float aspectRatio = static_cast<float>(WINDOW_WIDTH / WINDOW_HEIGHT);
 	glm::mat4 Ortho = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, 0.1f, 100.0f);
-	glm::mat4 Perspective = glm::perspectiveRH(glm::radians(60.0f), aspectRatio, 1.0f, 100.0f);
+
+	m_viewMatrix = glm::lookAtRH(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
+	m_perspectiveMatrix = glm::perspectiveRH(glm::radians(30.0f), aspectRatio, 1.0f, 100.0f);
 
 	// send camera data to all shaders
 
@@ -34,8 +35,8 @@ void CCamera::SendDataToShaders(std::unordered_map<ShaderType, GLuint> _shaders)
 		{
 			glUseProgram(it->second);
 
-			glUniformMatrix4fv(glGetUniformLocation(it->second, "gView"), 1, GL_FALSE, glm::value_ptr(View));
-			glUniformMatrix4fv(glGetUniformLocation(it->second, "gPerspective"), 1, GL_FALSE, glm::value_ptr(Perspective));
+			glUniformMatrix4fv(glGetUniformLocation(it->second, "gView"), 1, GL_FALSE, glm::value_ptr(m_viewMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(it->second, "gPerspective"), 1, GL_FALSE, glm::value_ptr(m_perspectiveMatrix));
 		}
 		
 	}
@@ -59,7 +60,6 @@ void CCamera::SetCameraFront(glm::vec3 _front)
 void CCamera::SetPosition(glm::vec3 _position)
 {
 	m_cameraPos += _position;
-	std::cout << m_cameraPos.x << "," << m_cameraPos.y << "," << m_cameraPos.z << std::endl;
 }
 
 glm::vec3 CCamera::GetPosition()
@@ -83,7 +83,7 @@ void CCamera::MoveCamera(glm::vec2 _mousePos)
 	GLfloat fYOffset = _mousePos.y - 400; //+veyoffsetgives clockwise rotation
 
 										 // Set camera sensitivity
-	GLfloat fCamSensitivity = 0.05f;
+	GLfloat fCamSensitivity = 0.025f;
 
 	// Multiply offset by sensitivity
 	fXOffset *= fCamSensitivity;
@@ -107,4 +107,14 @@ void CCamera::MoveCamera(glm::vec2 _mousePos)
 glm::vec3 CCamera::GetFront()
 {
 	return m_cameraFront;
+}
+
+glm::mat4 CCamera::GetViewMatrix()
+{
+	return m_viewMatrix;
+}
+
+glm::mat4 CCamera::GetPerspectiveMatrix()
+{
+	return m_perspectiveMatrix;
 }

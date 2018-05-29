@@ -8,7 +8,7 @@
 class Cloth : public Object
 {
 public:
-	Cloth(float _width, float _height, int _pointDensityX, int _pointDensityY, GLuint _shader);
+	Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader);
 	~Cloth();
 
 	void CreateVBOAttributes();
@@ -20,10 +20,11 @@ public:
 	void Step();
 	void Render();
 
+	std::vector<Triangle> GetTriangles();
 	Point* GetPoint(int _x, int _y);
 	void MakeSpring(Point* _point1, Point* _point2);
 
-	glm::vec3 GetTriangleNormal(Point* _point1, Point* _point2, Point* _point3);
+	Triangle MakeTriangle(Point* _point1, Point* _point2, Point* _point3);
 
 private:
 	std::vector<Point> m_points;
@@ -34,6 +35,7 @@ private:
 	// OpenGL
 	std::vector<GLuint> m_vecIndices;
 	std::vector<Vertice> m_vecVertices;
+	std::vector<Triangle> m_vecTriangles;
 	GLuint VBO, VAO, EBO;
 
 	//GLuint m_iScaleLocation, m_iRotateLocation, m_iTranslateLocation, m_icurrentTimeLocation;

@@ -21,6 +21,7 @@ public:
 	
 	void HandleMouseInput();
 	void HandleKeyboardInput();
+	bool UpdateMousePicking();
 
 	GLFWwindow* GetWindow() { return m_pWindow; }
 
@@ -38,11 +39,13 @@ private:
 private:
 	GLFWwindow* m_pWindow;
 	std::unique_ptr<CCamera> m_pCamera;
+	glm::vec2 m_mousePos;
+	glm::vec3 m_mouseRayDirection;
 
 	//std::unique_ptr<PostProcessing> m_pPostProcessing;
 	std::unique_ptr<Monster> m_pPlayer;
 
-	Cloth* clothyBoy;
+	Cloth* m_pCloth;
 	Text* textLavel;
 	Sprite* sprit;
 

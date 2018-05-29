@@ -2,20 +2,21 @@
 
 
 
-Cloth::Cloth(float _width, float _height, int _pointDensityX, int _pointDensityY, GLuint _shader)
+Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	:
 	m_iWidth(_pointDensityX),
 	m_iHeight(_pointDensityY),
 	Object(_shader)
 {
+	m_vecTriangles.resize(_pointDensityX * _pointDensityY);
 	m_points.resize(_pointDensityX * _pointDensityY);
 
 	for (int x = 0; x < _pointDensityX; x++)
 	{
 		for (int y = 0; y < _pointDensityY; y++)
 		{
-			m_points[y * _pointDensityX + x] = Point(glm::vec3(_width * (x / static_cast<float>(_pointDensityX)),
-				-_height * (y / static_cast<float>(_pointDensityY)),
+			m_points[y * _pointDensityX + x] = Point(glm::vec3(_pointDensityX * (x / static_cast<float>(_pointDensityX)),
+				-_pointDensityY * (y / static_cast<float>(_pointDensityY)),
 				0));
 
 			Vertice curVertex;
@@ -72,6 +73,8 @@ Cloth::Cloth(float _width, float _height, int _pointDensityX, int _pointDensityY
 			if (x<_pointDensityX - 2 && y<_pointDensityY - 2) MakeSpring(GetPoint(x + 2, y), GetPoint(x, y + 2));
 		}
 	}
+
+
 
 	GetPoint(1, 0)->ChangePos(glm::vec3(0.5f, 0.0f, 0.0f));
 	GetPoint(1, 0)->SetFixed(true);
@@ -138,27 +141,6 @@ void Cloth::Step()
 		}
 	}
 
-	for (auto point = m_points.begin(); point != m_points.end(); point++)
-	{
-		(*point).ResetNormals();
-	}
-
-	for (int x = 0; x<m_iWidth - 1; x++)
-	{
-		for (int y = 0; y<m_iHeight - 1; y++)
-		{
-			glm::vec3 normal = GetTriangleNormal(GetPoint(x + 1, y), GetPoint(x, y), GetPoint(x, y + 1));
-			GetPoint(x + 1, y)->ChangeNormal(normal);
-			GetPoint(x, y)->ChangeNormal(normal);
-			GetPoint(x, y + 1)->ChangeNormal(normal);
-
-			normal = GetTriangleNormal(GetPoint(x + 1, y + 1), GetPoint(x + 1, y), GetPoint(x, y + 1));
-			GetPoint(x + 1, y + 1)->ChangeNormal(normal);
-			GetPoint(x + 1, y)->ChangeNormal(normal);
-			GetPoint(x, y + 1)->ChangeNormal(normal);
-		}
-	}
-
 	for (int x = 0; x < m_iWidth; x++)
 	{
 		for (int y = 0; y < m_iHeight; y++)
@@ -169,13 +151,30 @@ void Cloth::Step()
 			// Update visuals of that point
 			m_vecVertices[y * m_iWidth + x].Position = GetPoint(x, y)->GetPosition();
 
-			//Vertice curVertex;
-			//curVertex.Color = glm::vec3(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)), static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)), static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)));
-			//curVertex.TexCoord = glm::vec2(0, 0);
-
-			//m_vecVertices.push_back(curVertex);
+			if (x == 0 && y == 1)
+			{
+				std::cout << m_vecVertices[y * m_iWidth + x].Position.x << "," << m_vecVertices[y * m_iWidth + x].Position.y << "," << m_vecVertices[y * m_iWidth + x].Position.z << std::endl;
+				std::cout << GetPoint(x, y)->GetPosition().x << std::endl;
+			}
 		}
 	}
+
+	m_vecTriangles.clear();
+	// Update triangles
+	for(int i = 0; i < m_vecVertices.size()/4; i++)
+	{
+		Triangle newTriangle;
+		newTriangle.P0 = m_vecVertices[(i * 3) + 0].Position;
+		newTriangle.P1 = m_vecVertices[(i * 3) + 1].Position;
+		newTriangle.P2 = m_vecVertices[(i * 3) + 2].Position;
+		m_vecTriangles.push_back(newTriangle);
+
+		newTriangle.P0 = m_vecVertices[(i * 3) + 2].Position;
+		newTriangle.P1 = m_vecVertices[(i * 3) + 3].Position;
+		newTriangle.P2 = m_vecVertices[(i * 3) + 0].Position;
+		m_vecTriangles.push_back(newTriangle);
+	}
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
@@ -186,6 +185,8 @@ void Cloth::Step()
 void Cloth::Render()
 {
 	glUseProgram(m_shader);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -200,6 +201,11 @@ void Cloth::Render()
 	glBindVertexArray(0);
 }
 
+std::vector<Triangle> Cloth::GetTriangles()
+{
+	return m_vecTriangles;
+}
+
 Point* Cloth::GetPoint(int _x, int _y)
 {
 	return &m_points[_y * m_iWidth + _x]; 
@@ -210,10 +216,7 @@ void Cloth::MakeSpring(Point* _point1, Point* _point2)
 	 m_springs.push_back(Spring(_point1, _point2));
 }
 
-glm::vec3 Cloth::GetTriangleNormal(Point * _point1, Point * _point2, Point * _point3)
+Triangle Cloth::MakeTriangle(Point * _point1, Point * _point2, Point * _point3)
 {
-	glm::vec3 v1 = _point2->GetPosition() - _point1->GetPosition();
-	glm::vec3 v2 = _point3->GetPosition() - _point1->GetPosition();
-
-	return glm::cross(v1, v2);
+	return Triangle(_point1->GetPosition(), _point2->GetPosition(), _point3->GetPosition());
 }
