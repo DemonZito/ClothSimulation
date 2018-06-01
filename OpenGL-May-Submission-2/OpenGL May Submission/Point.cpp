@@ -21,7 +21,7 @@ void Point::Step()
 	if (!m_bFixed)
 	{
 		glm::vec3 temp = m_position;
-		m_position = m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
+		m_position =  (1.99f * m_position) - m_oldPosition + (m_acceleration * pow(g_kfTimeStep,2));//m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
 		m_oldPosition = temp;
 		m_acceleration = glm::vec3(0, 0, 0); // acceleration is reset since it HAS been translated into a change in position (and implicitely into velocity)	
 	}
@@ -44,12 +44,15 @@ void Point::ChangeNormal(glm::vec3 _delta)
 
 glm::vec3 & Point::GetPosition()
 {
-	// TODO: insert return statement here
 	return m_position;
 }
 
 glm::vec3 & Point::GetNormal()
 {
-	// TODO: insert return statement here
 	return m_normal;
+}
+
+float Point::GetMass()
+{
+	return m_fMass;
 }

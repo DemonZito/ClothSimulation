@@ -5,6 +5,21 @@
 #include "Spring.h"
 #include "Object.h"
 
+struct Triangle
+{
+	Triangle(Point& _p0, Point& _p1, Point& _p2)
+	{
+		P0 = &_p0;
+		P1 = &_p1;
+		P2 = &_p2;
+	}
+
+	Triangle() {}
+	Point* P0;
+	Point* P1;
+	Point* P2;
+};
+
 class Cloth : public Object
 {
 public:
@@ -17,14 +32,14 @@ public:
 
 	void GLInit();
 	void AddForce(const glm::vec3 _force);
+	void MoveClothPoint(glm::vec3 delta);
 	void Step();
 	void Render();
 
 	std::vector<Triangle> GetTriangles();
 	Point* GetPoint(int _x, int _y);
 	void MakeSpring(Point* _point1, Point* _point2);
-
-	Triangle MakeTriangle(Point* _point1, Point* _point2, Point* _point3);
+	void PushCloth(int _idx);
 
 private:
 	std::vector<Point> m_points;

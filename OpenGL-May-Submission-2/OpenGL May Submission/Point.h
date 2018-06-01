@@ -16,6 +16,7 @@ public:
 
 	glm::vec3& GetPosition();
 	glm::vec3& GetNormal();
+	float GetMass();
 
 	void ResetNormals() { m_normal = glm::vec3(0, 0, 0); }
 
