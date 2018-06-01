@@ -7,17 +7,7 @@
 
 struct Triangle
 {
-	Triangle(Point& _p0, Point& _p1, Point& _p2)
-	{
-		P0 = &_p0;
-		P1 = &_p1;
-		P2 = &_p2;
-	}
-
-	Triangle() {}
-	Point* P0;
-	Point* P1;
-	Point* P2;
+	std::vector<Point*> m_vecPoints;
 };
 
 class Cloth : public Object
@@ -39,7 +29,8 @@ public:
 	std::vector<Triangle> GetTriangles();
 	Point* GetPoint(int _x, int _y);
 	void MakeSpring(Point* _point1, Point* _point2);
-	void PushCloth(int _idx);
+	void PushCloth(int _idx, glm::vec3 _direction);
+	glm::vec3 CalculateTriangleNormal(Point *_p0, Point *_p1, Point* _p2);
 
 private:
 	std::vector<Point> m_points;

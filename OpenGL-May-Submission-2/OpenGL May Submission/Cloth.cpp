@@ -8,8 +8,10 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	m_iHeight(_pointDensityY),
 	Object(_shader)
 {
-	m_vecTriangles.resize(_pointDensityX * _pointDensityY);
+	//m_vecTriangles.resize(_pointDensityX * _pointDensityY);
 	m_points.resize(_pointDensityX * _pointDensityY);
+
+	int triangleIdx = 0;
 
 	for (int x = 0; x < _pointDensityX; x++)
 	{
@@ -44,9 +46,20 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 			m_vecIndices[k + 1] = (y * _pointDensityX + (x + 1));
 			m_vecIndices[k + 2] = ((y + 1) * _pointDensityX + x);
 
+			m_vecTriangles.push_back(Triangle());
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + x]);
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + (x + 1)]);
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + x]);
+
 			m_vecIndices[k + 3] = ((y + 1) * _pointDensityX + x);
 			m_vecIndices[k + 4] = (y * _pointDensityX + (x + 1));
 			m_vecIndices[k + 5] = ((y + 1) * _pointDensityX + (x + 1));
+
+			m_vecTriangles.push_back(Triangle());
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + x]);
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + (x + 1)]);
+			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + (x + 1)]);
+
 
 			k += 6;
 		}
@@ -76,9 +89,9 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 
 
 
-	//GetPoint(1, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
-	GetPoint(0, 0)->SetFixed(true);
-	GetPoint(m_iWidth - 0, 0)->SetFixed(true);
+	GetPoint(5, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
+	GetPoint(5, 0)->SetFixed(true);
+	GetPoint(m_iWidth - 5, 0)->SetFixed(true);
 
 	GLInit();
 }
@@ -166,23 +179,6 @@ void Cloth::Step()
 		}
 	}
 
-	m_vecTriangles.clear();
-	// Update triangles
-	for(int i = 0; i < m_vecVertices.size()/4; i++)
-	{
-		Triangle newTriangle;
-		newTriangle.P0 = &m_points[(i * 3) + 0];
-		newTriangle.P1 = &m_points[(i * 3) + 1];
-		newTriangle.P2 = &m_points[(i * 3) + 2];
-		m_vecTriangles.push_back(newTriangle);
-
-		newTriangle.P0 = &m_points[(i * 3) + 2];
-		newTriangle.P1 = &m_points[(i * 3) + 3];
-		newTriangle.P2 = &m_points[(i * 3) + 0];
-		m_vecTriangles.push_back(newTriangle);
-	}
-
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -191,6 +187,28 @@ void Cloth::Step()
 
 void Cloth::Render()
 {
+	for (auto point = m_points.begin(); point != m_points.end(); point++)
+	{
+		(*point).ResetNormals();
+	}
+
+	//create smooth per particle normals by adding up all the (hard) triangle normals that each particle is part of
+	for (int x = 0; x<m_iWidth - 1; x++)
+	{
+		for (int y = 0; y<m_iHeight - 1; y++)
+		{
+			glm::vec3 normal = CalculateTriangleNormal(GetPoint(x + 1, y), GetPoint(x, y), GetPoint(x, y + 1));
+			GetPoint(x + 1, y)->ChangeNormal(normal);
+			GetPoint(x, y)->ChangeNormal(normal);
+			GetPoint(x, y + 1)->ChangeNormal(normal);
+
+			normal = CalculateTriangleNormal(GetPoint(x + 1, y + 1), GetPoint(x + 1, y), GetPoint(x, y + 1));
+			GetPoint(x + 1, y + 1)->ChangeNormal(normal);
+			GetPoint(x + 1, y)->ChangeNormal(normal);
+			GetPoint(x, y + 1)->ChangeNormal(normal);
+		}
+	}
+
 	glUseProgram(m_shader);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -223,10 +241,19 @@ void Cloth::MakeSpring(Point* _point1, Point* _point2)
 	 m_springs.push_back(Spring(_point1, _point2));
 }
 
-void Cloth::PushCloth(int _idx)
+void Cloth::PushCloth(int _idx, glm::vec3 _direction)
 {
-	//m_vecTriangles[_idx].P0->AddForce(glm::vec3(1, 1, 1));
-	//m_vecTriangles[_idx].P1->AddForce(glm::vec3(1, 1, 1));
-	//m_vecTriangles[_idx].P2->AddForce(glm::vec3(1, 1, 1));
+	const float force = 100.0f;
+	m_vecTriangles[_idx].m_vecPoints[0]->AddForce(_direction * force);
+	m_vecTriangles[_idx].m_vecPoints[1]->AddForce(_direction* force);
+	m_vecTriangles[_idx].m_vecPoints[2]->AddForce(_direction* force);
 
+}
+
+glm::vec3 Cloth::CalculateTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
+{
+	glm::vec3 v1 = _p1->GetPosition() - _p0->GetPosition();
+	glm::vec3 v2 = _p2->GetPosition() - _p0->GetPosition();
+
+	return glm::cross(v1, v2);
 }
