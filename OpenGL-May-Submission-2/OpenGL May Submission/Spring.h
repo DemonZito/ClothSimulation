@@ -14,4 +14,5 @@ private:
 	float m_fRestDistance;
 	Point* m_pPoint1;
 	Point* m_pPoint2;
+	bool m_bBroken = false;
 };

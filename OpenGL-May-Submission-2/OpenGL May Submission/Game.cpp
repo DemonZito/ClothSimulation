@@ -30,7 +30,7 @@ bool Game::UpdateMousePicking()
 
 
 	// Check intersection
-	std::vector<Triangle> triangles = m_pCloth->GetTriangles();
+	std::vector<Triangle*> triangles = m_pCloth->GetTriangles();
 
 
 	const float EPSILON = 0.0000001f;
@@ -39,8 +39,9 @@ bool Game::UpdateMousePicking()
 	{
 		glm::vec3 edge1, edge2, h, s, q;
 		float a, f, u, v;
-		edge1 = triangles[i].m_vecPoints[1]->GetPosition() - triangles[i].m_vecPoints[0]->GetPosition();
-		edge2 = triangles[i].m_vecPoints[2]->GetPosition() - triangles[i].m_vecPoints[0]->GetPosition();
+		std::vector<Point*> points = triangles[i]->GetPoints();
+		edge1 = points[1]->GetPosition() - points[0]->GetPosition();
+		edge2 = points[2]->GetPosition() - points[0]->GetPosition();
 		h = glm::cross(m_mouseRayDirection, edge2);
 		a = glm::dot(edge1, h);
 
@@ -48,7 +49,7 @@ bool Game::UpdateMousePicking()
 			continue;
 
 		f = 1 / a;
-		s = m_pCamera->GetPosition() - triangles[i].m_vecPoints[0]->GetPosition();
+		s = m_pCamera->GetPosition() - points[0]->GetPosition();
 		u = f * (glm::dot(s, h));
 
 		if (u < 0.0 || u > 1.0)
@@ -65,10 +66,23 @@ bool Game::UpdateMousePicking()
 		if (t > EPSILON) // ray intersection
 		{
 			glm::vec3 outIntersectionPoint = m_pCamera->GetPosition() + m_mouseRayDirection * t;
+
 			std::cout << "x: " << outIntersectionPoint.x << ", ";
 			std::cout << "y: " << outIntersectionPoint.y << ", ";
 			std::cout << "z: " << outIntersectionPoint.z << std::endl;
-			m_pCloth->PushCloth(i, m_mouseRayDirection);
+
+			Point* closest = nullptr;
+			float smallestDist = 100000;
+			for (int ptIdx = 0; ptIdx < 3; ptIdx++)
+			{
+				if (glm::distance(points[ptIdx]->GetPosition(), outIntersectionPoint) < smallestDist)
+				{
+					smallestDist = glm::distance(points[ptIdx]->GetPosition(), outIntersectionPoint);
+					closest = points[ptIdx];
+				}
+			}
+
+			m_pCloth->PushCloth(i, closest, m_mouseRayDirection);
 
 			return true;
 		}
@@ -155,10 +169,10 @@ bool Game::Initialize()
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 
-	m_pCloth = new Cloth(20, 20, g_mapShaders[UNLIT_STANDARD]);
-	textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
-	sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
-
+	m_pCloth = new Cloth(5, 5, g_mapShaders[UNLIT_STANDARD]);
+	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
+	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
+	m_testSlider = new Slider(g_mapShaders[SPRITE], g_mapShaders[TEXT], "test", 0, 10);
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
 		Update();
@@ -190,8 +204,7 @@ void Game::Render() const
 
 	m_pPlayer->Render();
 	m_pCloth->Render();
-	textLavel->Render();
-	sprit->Render();
+	m_testSlider->Render();
 	//m_pPostProcessing->Draw();
 
 	glfwSwapBuffers(m_pWindow);
@@ -202,7 +215,7 @@ void Game::Update()
 	glfwPollEvents();
 	HandleMouseInput();
 	HandleKeyboardInput();
-	m_pCloth->AddForce(glm::vec3(0.0f, -9.81f, 0.0f));
+	m_pCloth->AddForce(glm::vec3(0.0f, -0.81f, 0.0f));
 	m_pCloth->Step();
 	Input::Instance().Clear();
 
@@ -232,11 +245,11 @@ void Game::HandleKeyboardInput()
 	float monsterY= 0.0f;
 	if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
 		m_pPlayer->SetPosition(glm::vec3(monsterPos.x + 0.5f, monsterY, monsterPos.z));
-		m_pCloth->MoveClothPoint(glm::vec3(10, 0, 0));
+		m_pCloth->MoveClothPoint(glm::vec3(0.1f, 0, 0));
 	}
 	if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
 		m_pPlayer->SetPosition(glm::vec3(monsterPos.x - 0.5f, monsterY, monsterPos.z));
-		m_pCloth->MoveClothPoint(glm::vec3(-10, 0, 0));
+		m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
 
 	}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
 		m_pPlayer->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.5f));
@@ -259,10 +272,13 @@ void Game::HandleKeyboardInput()
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_A)) {
 		m_pCamera->SetPosition(-(glm::normalize(glm::cross(m_pCamera->GetFront(), m_pCamera->GetCameraUp()))* m_pCamera->GetCameraSpeed()));
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_D)) {
 		m_pCamera->SetPosition(glm::normalize(glm::cross(m_pCamera->GetFront(), m_pCamera->GetCameraUp()))* m_pCamera->GetCameraSpeed());
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_ESCAPE)) {

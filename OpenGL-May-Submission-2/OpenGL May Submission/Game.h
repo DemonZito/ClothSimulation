@@ -6,8 +6,9 @@
 #include "Monster.h"
 #include "Camera.h"
 #include "Cloth.h"
-#include "Text.h"
-#include "Sprite.h"
+//#include "Text.h"
+//#include "Sprite.h"
+#include "Slider.h"
 
 class Game
 {
@@ -46,8 +47,9 @@ private:
 	std::unique_ptr<Monster> m_pPlayer;
 
 	Cloth* m_pCloth;
-	Text* textLavel;
-	Sprite* sprit;
+	//Text* textLavel;
+	//Sprite* sprit;
+	Slider* m_testSlider;
 
 	std::vector<std::unique_ptr<Object>> m_vecObjects;
 	std::unordered_map<ShaderType, GLuint> g_mapShaders;

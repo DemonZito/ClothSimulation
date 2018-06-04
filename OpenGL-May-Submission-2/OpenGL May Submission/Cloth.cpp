@@ -8,10 +8,7 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	m_iHeight(_pointDensityY),
 	Object(_shader)
 {
-	//m_vecTriangles.resize(_pointDensityX * _pointDensityY);
 	m_points.resize(_pointDensityX * _pointDensityY);
-
-	int triangleIdx = 0;
 
 	for (int x = 0; x < _pointDensityX; x++)
 	{
@@ -20,20 +17,6 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 			m_points[y * _pointDensityX + x] = Point(glm::vec3(_pointDensityX * (x / static_cast<float>(_pointDensityX)),
 				-_pointDensityY * (y / static_cast<float>(_pointDensityY)),
 				0));
-
-			Vertice curVertex;
-			curVertex.Position = m_points[y * _pointDensityX + x].GetPosition();
-			curVertex.Color = glm::vec3(GenerateRandomFloat(0.0f, 1.0f), 0.0f, 0.0f );
-			curVertex.TexCoord = glm::vec2(x / _pointDensityX, y / _pointDensityY);
-			m_vecVertices.push_back(curVertex);
-		}
-	}
-
-	for (int x = 0; x < (_pointDensityX - 1); x++) {
-		for (int y = 0; y < (_pointDensityY - 1); y++) {
-			for (int k = 0; k < 6; k++) {
-				m_vecIndices.push_back(0);
-			}
 		}
 	}
 
@@ -42,26 +25,19 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	{
 		for (int x = 0; x < (_pointDensityX - 1); x++)
 		{
-			m_vecIndices[k] = (y * _pointDensityX + x);
-			m_vecIndices[k + 1] = (y * _pointDensityX + (x + 1));
-			m_vecIndices[k + 2] = ((y + 1) * _pointDensityX + x);
+			m_vecTriangles.push_back(new Triangle(_shader, k));
+			m_vecTriangles[k]->AddPoint(&m_points[y * _pointDensityX + x]);
+			m_vecTriangles[k]->AddPoint(&m_points[y * _pointDensityX + (x + 1)]);
+			m_vecTriangles[k]->AddPoint(&m_points[(y + 1) * _pointDensityX + x]);
+			m_vecTriangles[k]->GLInit();
+			k++;
 
-			m_vecTriangles.push_back(Triangle());
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + x]);
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + (x + 1)]);
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + x]);
-
-			m_vecIndices[k + 3] = ((y + 1) * _pointDensityX + x);
-			m_vecIndices[k + 4] = (y * _pointDensityX + (x + 1));
-			m_vecIndices[k + 5] = ((y + 1) * _pointDensityX + (x + 1));
-
-			m_vecTriangles.push_back(Triangle());
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + x]);
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[y * _pointDensityX + (x + 1)]);
-			m_vecTriangles[m_vecTriangles.size() - 1].m_vecPoints.push_back(&m_points[(y + 1) * _pointDensityX + (x + 1)]);
-
-
-			k += 6;
+			m_vecTriangles.push_back(new Triangle(_shader, k));
+			m_vecTriangles[k]->AddPoint(&m_points[(y + 1) * _pointDensityX + x]);
+			m_vecTriangles[k]->AddPoint(&m_points[y * _pointDensityX + (x + 1)]);
+			m_vecTriangles[k]->AddPoint(&m_points[(y + 1) * _pointDensityX + (x + 1)]);
+			m_vecTriangles[k]->GLInit();
+			k++;
 		}
 	}
 
@@ -69,10 +45,33 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	{
 		for (int y = 0; y < _pointDensityY; y++)
 		{
-			if (x<_pointDensityX - 1) MakeSpring(GetPoint(x, y), GetPoint(x + 1, y));
-			if (y<_pointDensityY - 1) MakeSpring(GetPoint(x, y), GetPoint(x, y + 1));
-			if (x<_pointDensityX - 1 && y<_pointDensityY - 1) MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1));
-			if (x<_pointDensityX - 1 && y<_pointDensityY - 1) MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1));
+			if (x < _pointDensityX - 1)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y));
+				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y));
+				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y));
+			}
+			if (y < _pointDensityY - 1)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x, y + 1));
+				//GetPoint(x, y)->AddLink(GetPoint(x, y + 1));
+				//GetPoint(x, y + 1)->AddLink(GetPoint(x, y));
+
+			}
+			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1));
+				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y + 1));
+				//GetPoint(x + 1, y + 1)->AddLink(GetPoint(x, y));
+
+			}
+			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
+			{
+				MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1));
+				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y + 1));
+				//GetPoint(x, y + 1)->AddLink(GetPoint(x + 1, y));
+
+			}
 		}
 	}
 
@@ -80,20 +79,41 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	{
 		for (int y = 0; y<_pointDensityY; y++)
 		{
-			if (x<_pointDensityX - 2) MakeSpring(GetPoint(x, y), GetPoint(x + 2, y));
-			if (y<_pointDensityY - 2) MakeSpring(GetPoint(x, y), GetPoint(x, y + 2));
-			if (x<_pointDensityX - 2 && y<_pointDensityY - 2) MakeSpring(GetPoint(x, y), GetPoint(x + 2, y + 2));
-			if (x<_pointDensityX - 2 && y<_pointDensityY - 2) MakeSpring(GetPoint(x + 2, y), GetPoint(x, y + 2));
+			if (x < _pointDensityX - 2)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x + 2, y));
+				//GetPoint(x, y)->AddLink(GetPoint(x + 2, y));
+				//GetPoint(x + 2, y)->AddLink(GetPoint(x, y));
+
+			}
+			if (y < _pointDensityY - 2)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x, y + 2));
+				//GetPoint(x, y)->AddLink(GetPoint(x, y + 2));
+				//GetPoint(x, y + 2)->AddLink(GetPoint(x, y));
+
+			}
+			if (x < _pointDensityX - 2 && y < _pointDensityY - 2)
+			{
+				MakeSpring(GetPoint(x, y), GetPoint(x + 2, y + 2));
+				//GetPoint(x, y)->AddLink(GetPoint(x + 2, y + 2));
+				//GetPoint(x + 2, y + 2)->AddLink(GetPoint(x, y));
+
+			}
+			if (x < _pointDensityX - 2 && y < _pointDensityY - 2)
+			{
+				MakeSpring(GetPoint(x + 2, y), GetPoint(x, y + 2));
+				//GetPoint(x + 2, y)->AddLink(GetPoint(x, y + 2));
+				//GetPoint(x, y + 2)->AddLink(GetPoint(x + 2, y));
+			}
 		}
 	}
 
 
 
-	GetPoint(5, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
-	GetPoint(5, 0)->SetFixed(true);
-	GetPoint(m_iWidth - 5, 0)->SetFixed(true);
-
-	GLInit();
+	GetPoint(1, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
+	GetPoint(1, 0)->SetFixed(true);
+	GetPoint(m_iWidth - 1, 0)->SetFixed(true);
 }
 
 
@@ -101,61 +121,32 @@ Cloth::~Cloth()
 {
 }
 
-void Cloth::CreateVBOAttributes()
-{
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
-
-	GLuint aPositionLocation = glGetAttribLocation(m_shader, "a_position");
-	glVertexAttribPointer(aPositionLocation, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), BUFFER_OFFSET(0));
-	glEnableVertexAttribArray(aPositionLocation);
-
-	GLuint aColor = glGetAttribLocation(m_shader, "a_color");
-	glVertexAttribPointer(aColor, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), BUFFER_OFFSET(3));
-	glEnableVertexAttribArray(aColor);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-}
-
-void Cloth::CreateEBO()
-{
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_vecIndices.size(), m_vecIndices.data(), GL_DYNAMIC_DRAW);
-}
-
-void Cloth::GLInit()
-{
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	CreateVBOAttributes();
-	CreateEBO();
-
-	GetUniformLocation();
-}
 
 void Cloth::AddForce(const glm::vec3 _force)
 {
-	for (auto point = m_points.begin(); point != m_points.end(); point++) {
-		(*point).AddForce(_force);
+	//for (auto point = m_points.begin(); point != m_points.end(); point++) {
+	//	(*point).AddForce(_force);
+	//}
+
+	for (int i = 0; i < m_vecTriangles.size(); i++)
+	{
+		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
+		for (auto pt = points.begin(); pt != points.end(); pt++)
+		{
+			(*pt)->AddForce(_force);
+		}
 	}
 }
 
 void Cloth::MoveClothPoint(glm::vec3 delta)
 {
-	GetPoint(5, 0)->SetFixed(false);
-	GetPoint(m_iWidth - 5, 0)->SetFixed(false);
+	GetPoint(1, 0)->SetFixed(false);
+	GetPoint(1, 0)->ChangePos(delta);
+	GetPoint(1, 0)->SetFixed(true);
 
-	GetPoint(5, 0)->ChangePos(delta);
-	GetPoint(m_iWidth - 5, 0)->ChangePos(-delta);
-
-	GetPoint(5, 0)->SetFixed(true);
-	GetPoint(m_iWidth - 5, 0)->SetFixed(true);
-
+	GetPoint(m_iWidth - 1, 0)->SetFixed(false);
+	GetPoint(m_iWidth - 1, 0)->ChangePos(-delta);
+	GetPoint(m_iWidth - 1, 0)->SetFixed(true);
 }
 
 void Cloth::Step()
@@ -172,17 +163,51 @@ void Cloth::Step()
 		for (int y = 0; y < m_iHeight; y++)
 		{
 			// Update point
-			GetPoint(x,y)->Step();
+			//if (!GetPoint(x, y)->GetDetached())
+			//{
+				GetPoint(x, y)->Step();
+			//}
 
 			// Update visuals of that point
-			m_vecVertices[y * m_iWidth + x].Position = GetPoint(x, y)->GetPosition();
 		}
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	for (auto point = m_detachedPoints.begin(); point != m_detachedPoints.end(); point++)
+	{
+		//if (!(*point)->GetDetached())
+		//{
+			(*point)->Step();
+		//}
+	}
 
+	for (int i = 0; i < m_vecTriangles.size(); i++)
+	{
+		if(!m_vecTriangles[i]->Step())
+		{
+			std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
+
+			for (int ptIdx = 0; ptIdx < 3; ptIdx++)
+			{
+				if (points[ptIdx]->GetDetached())
+				{
+					m_detachedPoints.push_back(points[ptIdx]);
+					m_detachedPoints[m_detachedPoints.size() - 1]->SetDetached(false);
+
+					std::vector<Point*> links = m_detachedPoints[m_detachedPoints.size() - 1]->GetLinks();
+					for (int connection = 0; connection < links.size(); connection++)
+					{
+						if (!links[connection]->GetDetached())
+						{
+							MakeSpring(m_detachedPoints[m_detachedPoints.size() - 1], links[connection]);
+							//m_detachedPoints[m_detachedPoints.size() - 1]->AddLink(links[connection]);
+							//links[connection]->AddLink(m_detachedPoints[m_detachedPoints.size() - 1]);
+
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Cloth::Render()
@@ -211,22 +236,15 @@ void Cloth::Render()
 
 	glUseProgram(m_shader);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//
 
-	glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	glm::mat4 Translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-	glUniformMatrix4fv(m_iScaleLocation, 1, GL_FALSE, glm::value_ptr(Scale));
-	glUniformMatrix4fv(m_iRotateLocation, 1, GL_FALSE, glm::value_ptr(Rotate));
-	glUniformMatrix4fv(m_iTranslateLocation, 1, GL_FALSE, glm::value_ptr(Translate));
-	
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, m_vecIndices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	for (int i = 0; i < m_vecTriangles.size(); i++)
+	{
+		m_vecTriangles[i]->Render();
+	}
 }
 
-std::vector<Triangle> Cloth::GetTriangles()
+std::vector<Triangle*> Cloth::GetTriangles()
 {
 	return m_vecTriangles;
 }
@@ -239,15 +257,53 @@ Point* Cloth::GetPoint(int _x, int _y)
 void Cloth::MakeSpring(Point* _point1, Point* _point2)
 {
 	 m_springs.push_back(Spring(_point1, _point2));
+	 _point1->AddLink(_point2);
+	 _point2->AddLink(_point1);
 }
 
-void Cloth::PushCloth(int _idx, glm::vec3 _direction)
+void Cloth::PushCloth(int _idx, Point* _pt, glm::vec3 _direction)
 {
-	const float force = 100.0f;
-	m_vecTriangles[_idx].m_vecPoints[0]->AddForce(_direction * force);
-	m_vecTriangles[_idx].m_vecPoints[1]->AddForce(_direction* force);
-	m_vecTriangles[_idx].m_vecPoints[2]->AddForce(_direction* force);
+	if (!_pt->GetDetached())
+	{
+		Point temp = *_pt;
+		std::vector<Point*> points = m_vecTriangles[_idx]->GetPoints();
 
+		for (int i = 0; i < 3; i++)
+		{
+			if (points[i] == _pt)
+			{
+				points.erase(points.begin() + i);
+				break;
+			}
+		}
+
+		Point* newPoint = new Point(temp.GetPosition());
+		newPoint->SetDetached(true);
+
+		if (!points[0]->GetDetached())
+			//MakeSpring(points[0], newPoint);
+
+		if (!points[1]->GetDetached())
+			//MakeSpring(points[1], newPoint);
+
+		if (points[0]->GetDetached() && points[1]->GetDetached())
+		{
+			MakeSpring(points[0], newPoint);
+			MakeSpring(points[1], newPoint);
+		}
+
+		points.push_back(newPoint);
+
+		m_vecTriangles[_idx]->ResetPoints();
+		for (int i = 0; i < 3; i++)
+		{
+			m_vecTriangles[_idx]->AddPoint(points[i]);
+		}
+
+		m_detachedPoints.push_back(newPoint);
+
+	}
+	
 }
 
 glm::vec3 Cloth::CalculateTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
