@@ -11,8 +11,8 @@ public:
 	void SatisfyConstraint();
 	Point* m_pPoint1;
 	Point* m_pPoint2;
+	bool m_bBroken = false;
 
 private:
 	float m_fRestDistance;
-	bool m_bBroken = false;
 };

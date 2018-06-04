@@ -281,6 +281,7 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 
 			Point* newPoint = new Point(temp.GetPosition());
 			newPoint->SetDetached(true);
+			newPoint->m_iTriangleIdx = temp.m_iTriangleIdx;
 
 			if(!points[0]->GetDetached())
 				MakeSpring(points[0], newPoint);
@@ -308,18 +309,17 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 			for (auto constraint = m_springs.begin(); constraint != m_springs.end(); constraint++) {
 				if ((*constraint).m_pPoint1 == _pt)
 				{
-					(*constraint).m_pPoint1 = newPoint;
+					(*constraint).m_bBroken = true;
 				}
 
 				if ((*constraint).m_pPoint2 == _pt)
 				{
-					(*constraint).m_pPoint2 = newPoint;
+					(*constraint).m_bBroken = true;
 				}
 			}
 
 		}
 		
-
 	}
 	
 }
