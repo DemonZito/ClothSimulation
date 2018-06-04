@@ -9,10 +9,10 @@ public:
 	Spring(Point* _point1, Point* _point2);
 
 	void SatisfyConstraint();
+	Point* m_pPoint1;
+	Point* m_pPoint2;
 
 private:
 	float m_fRestDistance;
-	Point* m_pPoint1;
-	Point* m_pPoint2;
 	bool m_bBroken = false;
 };

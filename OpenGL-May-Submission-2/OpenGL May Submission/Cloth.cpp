@@ -261,46 +261,64 @@ void Cloth::MakeSpring(Point* _point1, Point* _point2)
 	 _point2->AddLink(_point1);
 }
 
-void Cloth::PushCloth(int _idx, Point* _pt, glm::vec3 _direction)
+void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 {
 	if (!_pt->GetDetached())
 	{
-		Point temp = *_pt;
-		std::vector<Point*> points = m_vecTriangles[_idx]->GetPoints();
-
-		for (int i = 0; i < 3; i++)
+		for (int triangle = 0; triangle < _pt->m_iTriangleIdx.size(); triangle++)
 		{
-			if (points[i] == _pt)
+			Point temp = *_pt;
+			std::vector<Point*> points = m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->GetPoints();
+
+			for (int i = 0; i < 3; i++)
 			{
-				points.erase(points.begin() + i);
-				break;
+				if (points[i] == _pt)
+				{
+					points.erase(points.begin() + i);
+					break;
+				}
 			}
+
+			Point* newPoint = new Point(temp.GetPosition());
+			newPoint->SetDetached(true);
+
+			if(!points[0]->GetDetached())
+				MakeSpring(points[0], newPoint);
+
+			if (!points[1]->GetDetached())
+				MakeSpring(points[1], newPoint);
+
+			if (points[0]->GetDetached() && points[1]->GetDetached())
+			{
+				MakeSpring(points[0], newPoint);
+				MakeSpring(points[1], newPoint);
+			}
+
+
+			points.push_back(newPoint);
+
+			m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->ResetPoints();
+			for (int i = 0; i < 3; i++)
+			{
+				m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->AddPoint(points[i]);
+			}
+
+			m_detachedPoints.push_back(newPoint);
+
+			for (auto constraint = m_springs.begin(); constraint != m_springs.end(); constraint++) {
+				if ((*constraint).m_pPoint1 == _pt)
+				{
+					(*constraint).m_pPoint1 = newPoint;
+				}
+
+				if ((*constraint).m_pPoint2 == _pt)
+				{
+					(*constraint).m_pPoint2 = newPoint;
+				}
+			}
+
 		}
-
-		Point* newPoint = new Point(temp.GetPosition());
-		newPoint->SetDetached(true);
-
-		if (!points[0]->GetDetached())
-			//MakeSpring(points[0], newPoint);
-
-		if (!points[1]->GetDetached())
-			//MakeSpring(points[1], newPoint);
-
-		if (points[0]->GetDetached() && points[1]->GetDetached())
-		{
-			MakeSpring(points[0], newPoint);
-			MakeSpring(points[1], newPoint);
-		}
-
-		points.push_back(newPoint);
-
-		m_vecTriangles[_idx]->ResetPoints();
-		for (int i = 0; i < 3; i++)
-		{
-			m_vecTriangles[_idx]->AddPoint(points[i]);
-		}
-
-		m_detachedPoints.push_back(newPoint);
+		
 
 	}
 	

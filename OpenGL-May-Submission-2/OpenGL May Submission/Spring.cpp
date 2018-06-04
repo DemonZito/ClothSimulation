@@ -27,6 +27,11 @@ void Spring::SatisfyConstraint()
 		//	m_bBroken = true;
 		//}
 
+		//if (m_pPoint1->GetDetached() ^ m_pPoint2->GetDetached())
+		//{
+		//	m_bBroken = true;
+		//}
+
 		glm::vec3 correctionVector = pointVector * (1 - m_fRestDistance / pointDistance);
 		glm::vec3 correctionVectorHalf = correctionVector * 0.5f; // Lets make it half that length, so that we can move BOTH p1 and p2.
 		m_pPoint1->ChangePos(correctionVectorHalf); // correctionVectorHalf is pointing from p1 to p2, so the length should move p1 half the length needed to satisfy the constraint.

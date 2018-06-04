@@ -82,7 +82,7 @@ bool Game::UpdateMousePicking()
 				}
 			}
 
-			m_pCloth->PushCloth(i, closest, m_mouseRayDirection);
+			m_pCloth->PushCloth(closest, m_mouseRayDirection);
 
 			return true;
 		}
@@ -169,7 +169,7 @@ bool Game::Initialize()
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 
-	m_pCloth = new Cloth(5, 5, g_mapShaders[UNLIT_STANDARD]);
+	m_pCloth = new Cloth(15,15, g_mapShaders[UNLIT_STANDARD]);
 	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
 	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
 	m_testSlider = new Slider(g_mapShaders[SPRITE], g_mapShaders[TEXT], "test", 0, 10);
