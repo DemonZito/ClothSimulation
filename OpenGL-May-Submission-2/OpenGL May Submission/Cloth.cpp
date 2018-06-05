@@ -2,7 +2,7 @@
 
 
 
-Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
+Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader)
 	:
 	m_iWidth(_pointDensityX),
 	m_iHeight(_pointDensityY),
@@ -21,7 +21,7 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 	}
 
 	int k = 0;
-	for (int y = 0; y < (_pointDensityX - 1); y++)
+	for (int y = 0; y < (_pointDensityY - 1); y++)
 	{
 		for (int x = 0; x < (_pointDensityX - 1); x++)
 		{
@@ -109,11 +109,28 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, GLuint _shader)
 		}
 	}
 
-
-
 	GetPoint(1, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
-	GetPoint(1, 0)->SetFixed(true);
-	GetPoint(m_iWidth - 1, 0)->SetFixed(true);
+
+	if (numOfHooks % 2 == 1)
+	{
+		--numOfHooks;
+		// Add a hook at the very center
+		GetPoint((m_iWidth - 1) / 2, 0)->SetFixed(true);
+	}
+
+	// Hooks
+	int spaceBetweenHooks = 0;
+	if(numOfHooks != 1)
+		spaceBetweenHooks = glm::ceil(m_iWidth / (numOfHooks - 1));
+
+	for (int i = 0; i < (numOfHooks / 2); ++i)
+	{
+		int place = i * spaceBetweenHooks;
+
+		GetPoint(place, 0)->SetFixed(true);
+
+		GetPoint(m_iWidth - 1 - place, 0)->SetFixed(true);
+	}
 }
 
 
