@@ -92,8 +92,6 @@ bool Game::UpdateMousePicking()
 
 }
 
-
-
 bool Game::Initialize()
 {
 	m_bGameOver = false;
@@ -216,6 +214,7 @@ void Game::Update()
 	HandleMouseInput();
 	HandleKeyboardInput();
 	m_pCloth->AddForce(glm::vec3(0.0f, -0.81f, 0.0f));
+	m_pCloth->windForce(glm::vec3(0.25f, 0, 0.1f) * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	Input::Instance().Clear();
 
@@ -283,6 +282,15 @@ void Game::HandleKeyboardInput()
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_ESCAPE)) {
 		m_bGameOver = true;
+	}
+
+	// Wind Strength
+	if (Input::Instance().GetKeyDown(GLFW_KEY_M)) {
+		m_windStrength += 0.1f;
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_N)) {
+		m_windStrength -= 0.1f;
 	}
 }
 

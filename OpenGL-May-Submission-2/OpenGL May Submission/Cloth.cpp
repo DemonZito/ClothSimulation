@@ -324,6 +324,38 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 	
 }
 
+void Cloth::windForce(const glm::vec3 direction)
+{
+	for (int i = 0; i < m_vecTriangles.size(); ++i)
+	{
+		addWindForcesForTriangle(m_vecTriangles.at(i), direction);
+	}
+}
+
+glm::vec3 Cloth::calcTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
+{
+	glm::vec3 pos1 = _p0->GetPosition();
+	glm::vec3 pos2 = _p1->GetPosition();
+	glm::vec3 pos3 = _p2->GetPosition();
+
+	glm::vec3 v1 = pos2 - pos1;
+	glm::vec3 v2 = pos3 - pos1;
+
+	return glm::cross(v1, v2);
+}
+
+void Cloth::addWindForcesForTriangle(Triangle* triangle, const glm::vec3 direction)
+{
+	std::vector<Point*> points = triangle->GetPoints();
+	glm::vec3 normal = calcTriangleNormal(points[0], points[1], points[2]);
+	glm::vec3 d = glm::normalize(normal);
+	glm::vec3 force = normal * (glm::dot(d, direction));
+	points[0]->AddForce(force);
+	points[1]->AddForce(force);
+	points[2]->AddForce(force);
+}
+
+
 glm::vec3 Cloth::CalculateTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
 {
 	glm::vec3 v1 = _p1->GetPosition() - _p0->GetPosition();

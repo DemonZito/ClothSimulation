@@ -54,5 +54,7 @@ private:
 	std::vector<std::unique_ptr<Object>> m_vecObjects;
 	std::unordered_map<ShaderType, GLuint> g_mapShaders;
 	bool m_bGameOver;
+
+	float m_windStrength;
 };
 
