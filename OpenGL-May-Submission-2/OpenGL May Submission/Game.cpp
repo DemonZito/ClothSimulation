@@ -99,6 +99,7 @@ bool Game::Initialize()
 	m_clothLength = 15;
 	m_clothWidth = 15;
 	m_numOfHooks = 2;
+	m_mouseCameraControl = true;
 
 	// Init glfw
 	glfwInit();
@@ -157,6 +158,8 @@ bool Game::Initialize()
 	
 	// Create camera
 	m_pCamera = std::make_unique<CCamera>();
+	m_pCamera->SetPosition(glm::vec3(0, 20, -45));
+	m_pCamera->SetCameraFront(glm::vec3(0.14f, -0.51f, 0.85f));
 
 	// Create skybox
 	std::vector<std::string> strImagePaths;
@@ -178,7 +181,26 @@ bool Game::Initialize()
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
 	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
-	m_testSlider = new Slider(g_mapShaders[SPRITE], g_mapShaders[TEXT], "test", 0, 10);
+	
+	//UI Stuff
+	m_textLabels.push_back(new Text(glm::vec2(520, 170),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 150),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Change Direction:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(600, 130),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(Y) North", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 110),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(T) North West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(650, 110),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(U) North East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 90), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(G) West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(650, 90), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(J) East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 70), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(B) South West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(650, 70), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(M) South East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(600, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(N) South", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Speed: (K) Decrease (L) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(520, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(H) Reset Wind", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+
+	m_textLabels.push_back(new Text(glm::vec2(20, 170), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(20, 150), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+
+
+
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
 		Update();
@@ -211,7 +233,12 @@ void Game::Render() const
 	m_pPlayer->Render();
 	m_pCloth->Render();
 	m_pSphere->Render();
-	m_testSlider->Render();
+
+	for (int i = 0; i < m_textLabels.size(); ++i)
+	{
+		m_textLabels.at(i)->Render();
+	}
+
 	//m_pPostProcessing->Draw();
 
 	glfwSwapBuffers(m_pWindow);
@@ -227,23 +254,24 @@ void Game::Update()
 	m_pCloth->Step();
 	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
 	Input::Instance().Clear();
-
 }
 
 void Game::HandleMouseInput()
 {
-	m_mousePos = Input::Instance().MousePosition();
-	// If mouse has moved and camera exists
-	if (!(m_mousePos.x == 400 && m_mousePos.y == 400) && m_pCamera != nullptr)
-	{
-		m_pCamera->MoveCamera(m_mousePos);
+		m_mousePos = Input::Instance().MousePosition();
+		// If mouse has moved and camera exists
+		if (m_mouseCameraControl)
+		{
+			if (!(m_mousePos.x == 400 && m_mousePos.y == 400) && m_pCamera != nullptr)
+			{
+				m_pCamera->MoveCamera(m_mousePos);
 
-		// Reset mouse to center
-		glfwSetCursorPos(m_pWindow, 400, 400);
-	}
-
-	if (glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
-		UpdateMousePicking();
+				// Reset mouse to center
+				glfwSetCursorPos(m_pWindow, 400, 400);
+			}
+		}
+		if (glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
+			UpdateMousePicking();
 }
 
 void Game::HandleKeyboardInput()
@@ -380,6 +408,23 @@ void Game::HandleKeyboardInput()
 			++m_numOfHooks;
 		delete m_pCloth;
 		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+
+	// Toggle mouse controls
+	if (Input::Instance().GetKeyDown(GLFW_KEY_Q)) {
+		if (!m_mouseLockButtonDown)
+		{
+			m_mouseCameraControl = !m_mouseCameraControl;
+			m_mouseLockButtonDown = true;
+		}
+	}
+
+	// Toggle mouse controls
+	if (Input::Instance().GetKeyUp(GLFW_KEY_Q)) {
+		if (m_mouseLockButtonDown)
+		{
+			m_mouseLockButtonDown = false;
+		}
 	}
 }
 

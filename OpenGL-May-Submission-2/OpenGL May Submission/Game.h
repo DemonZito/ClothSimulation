@@ -49,9 +49,10 @@ private:
 
 	Cloth* m_pCloth;
 	std::unique_ptr<Sphere> m_pSphere;
-	//Text* textLavel;
 	//Sprite* sprit;
-	Slider* m_testSlider;
+	//Slider* m_testSlider;
+
+	std::vector<Text*> m_textLabels;
 
 	std::vector<std::unique_ptr<Object>> m_vecObjects;
 	std::unordered_map<ShaderType, GLuint> g_mapShaders;
@@ -63,5 +64,8 @@ private:
 	int m_clothLength;
 	int m_clothWidth;
 	int m_numOfHooks;
+
+	bool m_mouseCameraControl;
+	bool m_mouseLockButtonDown;
 };
 
