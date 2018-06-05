@@ -149,6 +149,20 @@ void Cloth::MoveClothPoint(glm::vec3 delta)
 	GetPoint(m_iWidth - 1, 0)->SetFixed(true);
 }
 
+void Cloth::ballCollision(const glm::vec3 center, const float radius)
+{
+	for (auto point = m_points.begin(); point != m_points.end(); point++)
+	{
+		glm::vec3 v = (*point).GetPosition() - center;
+		float l = glm::length(v);
+
+		if (l < radius)
+		{
+			(*point).ChangePos(glm::normalize(v) * (radius - l));
+		}
+	}
+}
+
 void Cloth::Step()
 {	
 	for (int i = 0; i < g_kiConstraintIterations; i++)
