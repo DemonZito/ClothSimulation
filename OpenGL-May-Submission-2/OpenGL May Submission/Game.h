@@ -56,5 +56,6 @@ private:
 	bool m_bGameOver;
 
 	float m_windStrength;
+	glm::vec3 m_windDirection;
 };
 

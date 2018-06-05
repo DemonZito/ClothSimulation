@@ -32,7 +32,6 @@ bool Game::UpdateMousePicking()
 	// Check intersection
 	std::vector<Triangle*> triangles = m_pCloth->GetTriangles();
 
-
 	const float EPSILON = 0.0000001f;
 
 	for (unsigned int i = 0; i < triangles.size(); i++)
@@ -95,6 +94,10 @@ bool Game::UpdateMousePicking()
 bool Game::Initialize()
 {
 	m_bGameOver = false;
+
+	// Init wind
+	m_windDirection = glm::vec3(0, 0, 0);
+	m_windStrength = 1.0f;
 
 	// Init glfw
 	glfwInit();
@@ -214,7 +217,7 @@ void Game::Update()
 	HandleMouseInput();
 	HandleKeyboardInput();
 	m_pCloth->AddForce(glm::vec3(0.0f, -0.81f, 0.0f));
-	m_pCloth->windForce(glm::vec3(0.25f, 0, 0.1f) * m_windStrength); // generate some wind each frame
+	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	Input::Instance().Clear();
 
@@ -284,13 +287,53 @@ void Game::HandleKeyboardInput()
 		m_bGameOver = true;
 	}
 
-	// Wind Strength
-	if (Input::Instance().GetKeyDown(GLFW_KEY_M)) {
-		m_windStrength += 0.1f;
+	// Winde Direction
+	if (Input::Instance().GetKeyDown(GLFW_KEY_T)) { // North West
+		m_windDirection = glm::vec3(0.25f, 0.0f, 0.25f);
 	}
 
-	if (Input::Instance().GetKeyDown(GLFW_KEY_N)) {
-		m_windStrength -= 0.1f;
+	if (Input::Instance().GetKeyDown(GLFW_KEY_Y)) { // North
+		m_windDirection = glm::vec3(0.0f, 0.0f, 0.25f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_U)) { // North East
+		m_windDirection = glm::vec3(-0.25f, 0.0f, 0.25f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_G)) { // West
+		m_windDirection = glm::vec3(0.25f, 0.0f, 0.0f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_J)) { // East
+		m_windDirection = glm::vec3(-0.25f, 0.0f, 0.0f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_B)) { // South West
+		m_windDirection = glm::vec3(0.25f, 0.0f, -0.25f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_N)) { // South
+		m_windDirection = glm::vec3(0.0f, 0.0f, -0.25f);
+	}
+
+	if (Input::Instance().GetKeyDown(GLFW_KEY_M)) { // South East
+		m_windDirection = glm::vec3(-0.25f, 0.0f, -0.25f);
+	}
+
+	//Reset Wind
+	if (Input::Instance().GetKeyDown(GLFW_KEY_H)) {
+		m_windDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		m_windStrength = 0.0f;
+	}
+
+	// Wind Strength
+	if (Input::Instance().GetKeyDown(GLFW_KEY_L)) {
+		if (m_windStrength < 11.0f)
+			m_windStrength += 0.1f;
+	}
+	if (Input::Instance().GetKeyDown(GLFW_KEY_K)) {
+		if (m_windStrength > 0.0f)
+			m_windStrength -= 0.1f;
 	}
 }
 
