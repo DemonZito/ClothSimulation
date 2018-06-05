@@ -222,7 +222,7 @@ void Game::Update()
 	glfwPollEvents();
 	HandleMouseInput();
 	HandleKeyboardInput();
-	m_pCloth->AddForce(glm::vec3(0.0f, -0.81f, 0.0f));
+	m_pCloth->AddForce(glm::vec3(0.0f, -0.11f, 0.0f));
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
