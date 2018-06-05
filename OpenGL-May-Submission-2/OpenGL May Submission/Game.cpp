@@ -170,7 +170,10 @@ bool Game::Initialize()
 
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
-	m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
+	m_pSphere = std::make_unique<Sphere>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Sphere.obj");
+	m_pSphere->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
+	m_pSphere->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
+	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
@@ -207,6 +210,7 @@ void Game::Render() const
 
 	m_pPlayer->Render();
 	m_pCloth->Render();
+	m_pSphere->Render();
 	m_testSlider->Render();
 	//m_pPostProcessing->Draw();
 
@@ -221,7 +225,7 @@ void Game::Update()
 	m_pCloth->AddForce(glm::vec3(0.0f, -0.81f, 0.0f));
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
-	m_pCloth->ballCollision(m_pPlayer->GetPosition(), 5);
+	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
 	Input::Instance().Clear();
 
 }
@@ -244,24 +248,24 @@ void Game::HandleMouseInput()
 
 void Game::HandleKeyboardInput()
 {
-	glm::vec3 monsterPos = m_pPlayer->GetPosition();
+	glm::vec3 monsterPos = m_pSphere->GetPosition();
 
 	// Movement of the monster/player
-	float monsterY= -7.0f;
+	float monsterY= -10.0f;
 	if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
-		m_pPlayer->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+		m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
 		//m_pCloth->MoveClothPoint(glm::vec3(0.1f, 0, 0));
 	}
 	if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
-		m_pPlayer->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+		m_pSphere->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
 		//m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
 
 	}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
-		m_pPlayer->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+		m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
 		//m_pCloth->MoveClothPoint(glm::vec3(0, 0, 1));
 
 	}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
-		m_pPlayer->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+		m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
 		//m_pCloth->MoveClothPoint(glm::vec3(0, 0, -1));
 
 	}

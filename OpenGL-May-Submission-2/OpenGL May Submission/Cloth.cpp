@@ -175,7 +175,7 @@ void Cloth::ballCollision(const glm::vec3 center, const float radius)
 
 		if (l < radius)
 		{
-			(*point).ChangePos(glm::normalize(v) * (radius - l));
+			(*point).ChangePos(glm::normalize(v) * (radius + 0.5f - l));
 		}
 	}
 }
