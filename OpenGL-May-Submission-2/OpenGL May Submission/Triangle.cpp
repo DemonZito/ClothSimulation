@@ -29,7 +29,8 @@ void Triangle::AddPoint(Point* _p)
 	{
 		Vertice newVertex;
 		newVertex.Position = _p->GetPosition();
-		newVertex.Color = glm::vec3(1, 1, 0);
+		newVertex.Color = glm::vec3(0.8f, 0.3f, 0.5f);
+		newVertex.NormalCoord = glm::vec3(0, 0, 0);
 		newVertex.TexCoord = glm::vec2(0, 0);
 		m_vecVertices.push_back(newVertex);
 
@@ -42,15 +43,19 @@ void Triangle::CreateVBOAttributes()
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 11 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
 
 	GLuint aPositionLocation = glGetAttribLocation(m_shader, "a_position");
-	glVertexAttribPointer(aPositionLocation, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), BUFFER_OFFSET(0));
+	glVertexAttribPointer(aPositionLocation, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(aPositionLocation);
 
 	GLuint aColor = glGetAttribLocation(m_shader, "a_color");
-	glVertexAttribPointer(aColor, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), BUFFER_OFFSET(3));
+	glVertexAttribPointer(aColor, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), BUFFER_OFFSET(3));
 	glEnableVertexAttribArray(aColor);
+
+	GLuint aNormal = glGetAttribLocation(m_shader, "a_normal");
+	glVertexAttribPointer(aNormal, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), BUFFER_OFFSET(6));
+	glEnableVertexAttribArray(aNormal);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -110,7 +115,7 @@ bool Triangle::Step()
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 11 * m_vecVertices.size(), m_vecVertices.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	return breakage;
@@ -118,6 +123,11 @@ bool Triangle::Step()
 
 void Triangle::Render()
 {
+	for (int i = 0; i < 3; i++)
+	{
+		m_vecVertices[i].NormalCoord = m_vecPoints[i]->GetNormal();
+	}
+	
 	glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	glm::mat4 Translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
@@ -129,4 +139,5 @@ void Triangle::Render()
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
 }

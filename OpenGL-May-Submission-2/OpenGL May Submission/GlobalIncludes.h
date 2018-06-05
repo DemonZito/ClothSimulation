@@ -36,6 +36,7 @@ struct Vertice
 {
 	glm::vec3 Position;
 	glm::vec3 Color;
+	glm::vec3 NormalCoord;
 	glm::vec2 TexCoord;
 };
 
