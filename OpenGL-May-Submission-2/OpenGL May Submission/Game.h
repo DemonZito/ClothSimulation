@@ -57,5 +57,9 @@ private:
 
 	float m_windStrength;
 	glm::vec3 m_windDirection;
+
+	int m_clothLength;
+	int m_clothWidth;
+	int m_numOfHooks;
 };
 

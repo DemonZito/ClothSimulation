@@ -94,10 +94,11 @@ bool Game::UpdateMousePicking()
 bool Game::Initialize()
 {
 	m_bGameOver = false;
-
-	// Init wind
 	m_windDirection = glm::vec3(0, 0, 0);
 	m_windStrength = 1.0f;
+	m_clothLength = 15;
+	m_clothWidth = 15;
+	m_numOfHooks = 2;
 
 	// Init glfw
 	glfwInit();
@@ -171,7 +172,7 @@ bool Game::Initialize()
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 	m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
-	m_pCloth = new Cloth(15,15, g_mapShaders[UNLIT_STANDARD]);
+	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
 	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
 	m_testSlider = new Slider(g_mapShaders[SPRITE], g_mapShaders[TEXT], "test", 0, 10);
@@ -336,6 +337,45 @@ void Game::HandleKeyboardInput()
 	if (Input::Instance().GetKeyDown(GLFW_KEY_K)) {
 		if (m_windStrength > 0.0f)
 			m_windStrength -= 0.1f;
+	}
+
+	// Cloth length
+	if (Input::Instance().GetKeyDown(GLFW_KEY_1)) {
+		if(m_clothLength > 2)
+			--m_clothLength;
+		delete m_pCloth;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+	if (Input::Instance().GetKeyDown(GLFW_KEY_2)) {
+		++m_clothLength;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+
+	// Cloth Width
+	if (Input::Instance().GetKeyDown(GLFW_KEY_3)) {
+		if (m_clothWidth > 2)
+			--m_clothWidth;
+		delete m_pCloth;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+	if (Input::Instance().GetKeyDown(GLFW_KEY_4)) {
+		++m_clothWidth;
+		delete m_pCloth;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+
+	// Number of hooks
+	if (Input::Instance().GetKeyDown(GLFW_KEY_5)) {
+		if (m_clothWidth > 1)
+			--m_numOfHooks;
+		delete m_pCloth;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	}
+	if (Input::Instance().GetKeyDown(GLFW_KEY_6)) {
+		if(m_numOfHooks < m_clothWidth)
+			++m_numOfHooks;
+		delete m_pCloth;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	}
 }
 
