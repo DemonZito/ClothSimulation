@@ -67,5 +67,9 @@ private:
 
 	bool m_mouseCameraControl;
 	bool m_mouseLockButtonDown;
+
+	Point* m_pGrabbedPoint = nullptr;
+	glm::vec4 m_screenPoint;
+	glm::vec3 m_offset;
 };
 

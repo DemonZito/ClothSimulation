@@ -11,6 +11,7 @@ public:
 	void AddForce(glm::vec3 _force);
 	void Step();
 	void ChangePos(const glm::vec3 _delta);
+	void SetPos(glm::vec3 _newPos) { m_position = _newPos; }
 	void SetFixed(bool _isFixed);
 	bool GetFixed();
 	void ChangeNormal(glm::vec3 _delta);
