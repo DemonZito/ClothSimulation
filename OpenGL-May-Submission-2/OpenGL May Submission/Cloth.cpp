@@ -75,42 +75,6 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 		}
 	}
 
-	for (int x = 0; x<_pointDensityX; x++)
-	{
-		for (int y = 0; y<_pointDensityY; y++)
-		{
-			if (x < _pointDensityX - 2)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 2, y));
-				//GetPoint(x, y)->AddLink(GetPoint(x + 2, y));
-				//GetPoint(x + 2, y)->AddLink(GetPoint(x, y));
-
-			}
-			if (y < _pointDensityY - 2)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x, y + 2));
-				//GetPoint(x, y)->AddLink(GetPoint(x, y + 2));
-				//GetPoint(x, y + 2)->AddLink(GetPoint(x, y));
-
-			}
-			if (x < _pointDensityX - 2 && y < _pointDensityY - 2)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 2, y + 2));
-				//GetPoint(x, y)->AddLink(GetPoint(x + 2, y + 2));
-				//GetPoint(x + 2, y + 2)->AddLink(GetPoint(x, y));
-
-			}
-			if (x < _pointDensityX - 2 && y < _pointDensityY - 2)
-			{
-				MakeSpring(GetPoint(x + 2, y), GetPoint(x, y + 2));
-				//GetPoint(x + 2, y)->AddLink(GetPoint(x, y + 2));
-				//GetPoint(x, y + 2)->AddLink(GetPoint(x + 2, y));
-			}
-		}
-	}
-
-	GetPoint(1, 0)->ChangePos(glm::vec3(0.0f, 0.0f, 0.0f));
-
 	if (numOfHooks % 2 == 1)
 	{
 		--numOfHooks;
@@ -141,10 +105,6 @@ Cloth::~Cloth()
 
 void Cloth::AddForce(const glm::vec3 _force)
 {
-	//for (auto point = m_points.begin(); point != m_points.end(); point++) {
-	//	(*point).AddForce(_force);
-	//}
-
 	for (int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
@@ -207,51 +167,22 @@ void Cloth::Step()
 	{
 		for (int y = 0; y < m_iHeight; y++)
 		{
-			// Update point
-			//if (!GetPoint(x, y)->GetDetached())
-			//{
-				GetPoint(x, y)->Step();
-			//}
-
-			// Update visuals of that point
+			GetPoint(x, y)->Step();
+			if (GetPoint(x, y)->m_bOverExtended)
+			{
+				PushCloth(GetPoint(x, y), glm::vec3(0,0,0));
+			}
 		}
 	}
 
 	for (auto point = m_detachedPoints.begin(); point != m_detachedPoints.end(); point++)
 	{
-		//if (!(*point)->GetDetached())
-		//{
-			(*point)->Step();
-		//}
+		(*point)->Step();
 	}
 
 	for (int i = 0; i < m_vecTriangles.size(); i++)
 	{
-		if(!m_vecTriangles[i]->Step())
-		{
-			std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
-
-			for (int ptIdx = 0; ptIdx < 3; ptIdx++)
-			{
-				if (points[ptIdx]->GetDetached())
-				{
-					m_detachedPoints.push_back(points[ptIdx]);
-					m_detachedPoints[m_detachedPoints.size() - 1]->SetDetached(false);
-
-					std::vector<Point*> links = m_detachedPoints[m_detachedPoints.size() - 1]->GetLinks();
-					for (int connection = 0; connection < links.size(); connection++)
-					{
-						if (!links[connection]->GetDetached())
-						{
-							MakeSpring(m_detachedPoints[m_detachedPoints.size() - 1], links[connection]);
-							//m_detachedPoints[m_detachedPoints.size() - 1]->AddLink(links[connection]);
-							//links[connection]->AddLink(m_detachedPoints[m_detachedPoints.size() - 1]);
-
-						}
-					}
-				}
-			}
-		}
+		m_vecTriangles[i]->Step();
 	}
 }
 
@@ -310,6 +241,7 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 {
 	if (!_pt->GetDetached())
 	{
+		_pt->m_bOverExtended = false;
 		for (int triangle = 0; triangle < _pt->m_iTriangleIdx.size(); triangle++)
 		{
 			Point temp = *_pt;
