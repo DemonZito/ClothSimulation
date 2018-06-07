@@ -155,6 +155,20 @@ void Cloth::AddForce(const glm::vec3 _force)
 	}
 }
 
+void Cloth::AddGravity()
+{
+	for (int i = 0; i < m_vecTriangles.size(); i++)
+	{
+		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
+		for (auto pt = points.begin(); pt != points.end(); pt++)
+		{
+			if ((*pt)->GetPosition.y > 0.0f){
+				(*pt)->AddForce(glm::vec3(0.0f, -0.11f, 0.0f));
+			}
+		}
+	}
+}
+
 void Cloth::MoveClothPoint(glm::vec3 delta)
 {
 	GetPoint(1, 0)->SetFixed(false);

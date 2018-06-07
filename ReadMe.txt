@@ -1,6 +1,7 @@
 Controls:
 
-	WASD : 	Move Camera
+	Move Camera : WASD
+	Camera Lock : Q
 
 Wind Direction:
 	North East : 	T
@@ -18,11 +19,11 @@ Wind Strength:
 	Decrease : K
 	Increase : L
 
-Cloth Width:
+Cloth Length
 	Decrease : 1
 	Increase : 2
 
-Cloth Length:
+Cloth Width
 	Decrease : 3
 	Increase : 4
 

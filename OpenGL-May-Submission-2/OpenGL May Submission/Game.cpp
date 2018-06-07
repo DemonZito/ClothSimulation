@@ -196,10 +196,14 @@ bool Game::Initialize()
 	m_textLabels.push_back(new Text(glm::vec2(520, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Speed: (K) Decrease (L) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_textLabels.push_back(new Text(glm::vec2(520, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(H) Reset Wind", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-	m_textLabels.push_back(new Text(glm::vec2(20, 170), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(20, 150), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera Lock: (Q) Toggle On/Off", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-
+	m_textLabels.push_back(new Text(glm::vec2(10, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Curtain Shape:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Length: (1) Decrease (2) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 730), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Width: (3) Decrease (4) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_textLabels.push_back(new Text(glm::vec2(10, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks: (5) Decrease (6) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -249,7 +253,7 @@ void Game::Update()
 	glfwPollEvents();
 	HandleMouseInput();
 	HandleKeyboardInput();
-	m_pCloth->AddForce(glm::vec3(0.0f, -0.11f, 0.0f));
+	m_pCloth->AddGravity();
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
@@ -263,7 +267,7 @@ void Game::HandleMouseInput()
 		if (m_mouseCameraControl)
 		{
 			if (!(m_mousePos.x == 400 && m_mousePos.y == 400) && m_pCamera != nullptr)
-			{
+			{				
 				m_pCamera->MoveCamera(m_mousePos);
 
 				// Reset mouse to center

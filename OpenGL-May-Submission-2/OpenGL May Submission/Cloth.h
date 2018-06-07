@@ -13,6 +13,7 @@ public:
 	~Cloth();
 
 	void AddForce(const glm::vec3 _force);
+	void AddGravity();
 	void MoveClothPoint(glm::vec3 delta);
 	void ballCollision(const glm::vec3 center, const float radius);
 	void Step();
