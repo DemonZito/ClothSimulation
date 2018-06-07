@@ -6,8 +6,8 @@ CCamera::CCamera()
 	m_cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	m_cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	m_fYaw = 0.0f;
-	m_fPitch = 0.0f;
+	m_fYaw = -171.5f;
+	m_fPitch = -30.5f;
 }
 
 
@@ -101,6 +101,7 @@ void CCamera::MoveCamera(glm::vec2 _mousePos)
 	glm::vec3 FrontVector(-cos(glm::radians(m_fPitch))*sin(glm::radians(m_fYaw)),
 		sin(glm::radians(m_fPitch)),
 		-cos(glm::radians(m_fPitch)) * cos(glm::radians(m_fYaw)));
+
 	m_cameraFront = glm::normalize(FrontVector);
 }
 

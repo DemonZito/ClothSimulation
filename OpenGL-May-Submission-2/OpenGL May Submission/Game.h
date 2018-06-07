@@ -8,7 +8,7 @@
 #include "Cloth.h"
 #include "Sphere.h"
 //#include "Text.h"
-//#include "Sprite.h"
+#include "Sprite.h"
 #include "Slider.h"
 
 class Game
@@ -53,7 +53,8 @@ private:
 	//Sprite* sprit;
 	//Slider* m_testSlider;
 
-	std::vector<Text*> m_textLabels;
+	std::vector<Text*> m_UIText;
+	std::vector<Sprite*> m_UISprites;
 
 	std::vector<std::unique_ptr<Object>> m_vecObjects;
 	std::unordered_map<ShaderType, GLuint> g_mapShaders;

@@ -103,7 +103,7 @@ bool Game::Initialize()
 	m_clothLength = 15;
 	m_clothWidth = 15;
 	m_numOfHooks = 2;
-	m_mouseCameraControl = true;
+	m_mouseCameraControl = false;
 
 	// Init glfw
 	glfwInit();
@@ -187,27 +187,33 @@ bool Game::Initialize()
 	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
 	
 	//UI Stuff
-	m_textLabels.push_back(new Text(glm::vec2(520, 170),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 150),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Change Direction:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(600, 130),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(Y) North", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 110),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(T) North West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(650, 110),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(U) North East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 90), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(G) West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(650, 90), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(J) East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 70), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(B) South West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(650, 70), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(M) South East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(600, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(N) South", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Speed: (K) Decrease (L) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(520, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(H) Reset Wind", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 180),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 160),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Change Direction:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(600, 140),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(Y) North", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 120),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(T) North West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(650, 120),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(U) North East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 100), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(G) West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(650, 100), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(J) East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(B) South West", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(650, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(M) South East", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(600, 60), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(N) South", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 40), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Speed: (K) Decrease (L) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(520, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "(H) Reset Wind", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-	m_textLabels.push_back(new Text(glm::vec2(10, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(10, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(10, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera Lock: (Q) Toggle On/Off", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera Lock: (Q) Toggle On/Off", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-	m_textLabels.push_back(new Text(glm::vec2(10, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Curtain Shape:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(10, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Length: (1) Decrease (2) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(10, 730), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Width: (3) Decrease (4) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_textLabels.push_back(new Text(glm::vec2(10, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks: (5) Decrease (6) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Curtain Shape:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Length: (1) Decrease (2) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Width: (3) Decrease (4) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 670), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks: (5) Decrease (6) Increase", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 630), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Reset: (R)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]));
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]));
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 135), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]));
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(520, 25), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]));
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -242,11 +248,15 @@ void Game::Render() const
 	m_pCloth->Render();
 	m_pSphere->Render();
 
-	for (int i = 0; i < m_textLabels.size(); ++i)
+	for (int i = 0; i < m_UIText.size(); ++i)
 	{
-		m_textLabels.at(i)->Render();
+		m_UIText.at(i)->Render();
 	}
 
+	for (int i = 0; i < m_UISprites.size(); ++i)
+	{
+		m_UISprites.at(i)->Render();
+	}
 	//m_pPostProcessing->Draw();
 
 	glfwSwapBuffers(m_pWindow);
@@ -261,10 +271,6 @@ void Game::Update()
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	m_pCloth->FloorCollision();
-
-
-
-
 	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
 	Input::Instance().Clear();
 }
@@ -360,35 +366,35 @@ void Game::HandleKeyboardInput()
 
 	// Winde Direction
 	if (Input::Instance().GetKeyDown(GLFW_KEY_T)) { // North West
-		m_windDirection = glm::vec3(0.25f, 0.0f, 0.25f);
+		m_windDirection = glm::vec3(0.1f, 0.0f, 0.1f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_Y)) { // North
-		m_windDirection = glm::vec3(0.0f, 0.0f, 0.25f);
+		m_windDirection = glm::vec3(0.0f, 0.0f, 0.1f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_U)) { // North East
-		m_windDirection = glm::vec3(-0.25f, 0.0f, 0.25f);
+		m_windDirection = glm::vec3(-0.1f, 0.0f, 0.1f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_G)) { // West
-		m_windDirection = glm::vec3(0.25f, 0.0f, 0.0f);
+		m_windDirection = glm::vec3(0.1f, 0.0f, 0.0f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_J)) { // East
-		m_windDirection = glm::vec3(-0.25f, 0.0f, 0.0f);
+		m_windDirection = glm::vec3(-0.1f, 0.0f, 0.0f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_B)) { // South West
-		m_windDirection = glm::vec3(0.25f, 0.0f, -0.25f);
+		m_windDirection = glm::vec3(0.1f, 0.0f, -0.1f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_N)) { // South
-		m_windDirection = glm::vec3(0.0f, 0.0f, -0.25f);
+		m_windDirection = glm::vec3(0.0f, 0.0f, -0.1f);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_M)) { // South East
-		m_windDirection = glm::vec3(-0.25f, 0.0f, -0.25f);
+		m_windDirection = glm::vec3(-0.1f, 0.0f, -0.1f);
 	}
 
 	//Reset Wind
@@ -461,6 +467,18 @@ void Game::HandleKeyboardInput()
 		{
 			m_mouseLockButtonDown = false;
 		}
+	}
+
+	// Reset Cloth
+	if (Input::Instance().GetKeyDown(GLFW_KEY_R)) {
+		delete m_pCloth;
+		m_bGameOver = false;
+		m_windDirection = glm::vec3(0, 0, 0);
+		m_windStrength = 1.0f;
+		m_clothLength = 15;
+		m_clothWidth = 15;
+		m_numOfHooks = 2;
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	}
 }
 
