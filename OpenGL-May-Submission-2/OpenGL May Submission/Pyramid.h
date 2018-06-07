@@ -4,12 +4,12 @@
 #include "Object.h"
 #include "Model.h"
 
-class Sphere :
+class Pyramid :
 	public Object
 {
 public:
-	Sphere(GLuint _shader);
-	~Sphere();
+	Pyramid(GLuint _shader);
+	~Pyramid();
 
 	void SetPosition(glm::vec3 pos);
 	glm::vec3 GetPosition();

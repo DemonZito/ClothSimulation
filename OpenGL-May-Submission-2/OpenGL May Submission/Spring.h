@@ -6,7 +6,7 @@ class Spring
 {
 public:
 
-	Spring(Point* _point1, Point* _point2);
+	Spring(Point* _point1, Point* _point2, float _restingDistance);
 
 	void SatisfyConstraint();
 	Point* m_pPoint1;

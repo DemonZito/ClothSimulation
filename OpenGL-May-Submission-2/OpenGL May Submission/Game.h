@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Cloth.h"
 #include "Sphere.h"
+#include "Pyramid.h"
 //#include "Text.h"
 #include "Sprite.h"
 #include "Slider.h"
@@ -49,7 +50,8 @@ private:
 	std::unique_ptr<Monster> m_pPlayer;
 
 	Cloth* m_pCloth;
-	std::unique_ptr<Sphere> m_pSphere;
+	Sphere* m_pSphere;
+	Pyramid* m_pPyramid;
 	//Sprite* sprit;
 	//Slider* m_testSlider;
 

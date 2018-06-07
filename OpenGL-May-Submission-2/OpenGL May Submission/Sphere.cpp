@@ -2,11 +2,11 @@
 
 
 
-Sphere::Sphere(GLuint _shader, const char* path)
+Sphere::Sphere(GLuint _shader)
 	:
 	Object(_shader)
 {
-	m_pModel = std::make_unique<Model>(path, _shader);
+	m_pModel = std::make_unique<Model>("Resources/Models/Sphere.obj", _shader);
 }
 
 

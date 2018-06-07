@@ -149,6 +149,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="PostProcessing.cpp" />
+    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Slider.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="PostProcessing.h" />
+    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Slider.h" />
