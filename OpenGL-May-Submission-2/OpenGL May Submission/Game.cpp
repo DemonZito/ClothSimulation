@@ -278,17 +278,27 @@ void Game::HandleMouseInput()
 			UpdateMousePicking();
 		else if (m_pGrabbedPoint && glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
 		{
-			glm::vec3 cursorPoint = glm::vec3(m_mousePos.x, m_mousePos.y, m_screenPoint.z);
-			glm::vec4 cursorPos = (m_pCamera->GetViewMatrix() * glm::vec4(cursorPoint, 1.0f)) + glm::vec4(m_offset, 1.0f);
-			m_pGrabbedPoint->SetPos(glm::vec3(cursorPos));
+			glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
+			glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
+			viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
+
+			glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
+			m_pGrabbedPoint->SetPos(glm::vec3(newPos));
 		}
 		else
 		{
-			if(m_pGrabbedPoint)
+			if (m_pGrabbedPoint)
+			{
 				m_pGrabbedPoint->SetFixed(false);
+				/*if(m_pGrabbedPoint->m_bOverExtended)
+					m_pCloth->PushCloth(m_pGrabbedPoint, glm::vec3(0, 0, 0));*/
 
-			m_pGrabbedPoint = nullptr;
+				m_pGrabbedPoint = nullptr;
+			}
+
 		}
+
+		m_prevMousePos = m_mousePos;
 }
 
 void Game::HandleKeyboardInput()

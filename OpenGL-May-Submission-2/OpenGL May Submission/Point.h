@@ -33,6 +33,8 @@ public:
 
 	std::vector<int> m_iTriangleIdx;
 
+	bool m_bOverExtended = false;
+
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_oldPosition;

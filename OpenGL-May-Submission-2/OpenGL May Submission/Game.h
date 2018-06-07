@@ -42,6 +42,7 @@ private:
 	GLFWwindow* m_pWindow;
 	std::unique_ptr<CCamera> m_pCamera;
 	glm::vec2 m_mousePos;
+	glm::vec2 m_prevMousePos;
 	glm::vec3 m_mouseRayDirection;
 
 	//std::unique_ptr<PostProcessing> m_pPostProcessing;
