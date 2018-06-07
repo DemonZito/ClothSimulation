@@ -177,9 +177,17 @@ bool Game::Initialize()
 
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
-	m_pSphere = std::make_unique<Sphere>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Sphere.obj");
+
+	m_vecObjects.push_back(std::make_unique<Sphere>(g_mapShaders[UNLIT_MODEL]));
+	m_pSphere = dynamic_cast<Sphere*>(m_vecObjects[m_vecObjects.size() - 1].get());
 	m_pSphere->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 	m_pSphere->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
+
+	m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
+	m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
+	m_pPyramid->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
+	m_pPyramid->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
+
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
@@ -236,7 +244,6 @@ void Game::Render() const
 
 	m_pPlayer->Render();
 	m_pCloth->Render();
-	m_pSphere->Render();
 
 	for (int i = 0; i < m_textLabels.size(); ++i)
 	{

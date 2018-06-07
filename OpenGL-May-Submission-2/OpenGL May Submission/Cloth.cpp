@@ -47,27 +47,27 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 		{
 			if (x < _pointDensityX - 1)
 			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y));
+				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y), 0);
 				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y));
 				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y));
 			}
 			if (y < _pointDensityY - 1)
 			{
-				MakeSpring(GetPoint(x, y), GetPoint(x, y + 1));
+				MakeSpring(GetPoint(x, y), GetPoint(x, y + 1), 0);
 				//GetPoint(x, y)->AddLink(GetPoint(x, y + 1));
 				//GetPoint(x, y + 1)->AddLink(GetPoint(x, y));
 
 			}
 			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
 			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1));
+				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1), 0);
 				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y + 1));
 				//GetPoint(x + 1, y + 1)->AddLink(GetPoint(x, y));
 
 			}
 			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
 			{
-				MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1));
+				MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1), 0);
 				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y + 1));
 				//GetPoint(x, y + 1)->AddLink(GetPoint(x + 1, y));
 
@@ -216,9 +216,9 @@ Point* Cloth::GetPoint(int _x, int _y)
 	return &m_points[_y * m_iWidth + _x]; 
 }
 
-void Cloth::MakeSpring(Point* _point1, Point* _point2)
+void Cloth::MakeSpring(Point* _point1, Point* _point2, float _restingDistance)
 {
-	 m_springs.push_back(Spring(_point1, _point2));
+	 m_springs.push_back(Spring(_point1, _point2, _restingDistance));
 	 _point1->AddLink(_point2);
 	 _point2->AddLink(_point1);
 }
@@ -247,15 +247,15 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 			newPoint->m_iTriangleIdx = temp.m_iTriangleIdx;
 
 			if(!points[0]->GetDetached())
-				MakeSpring(points[0], newPoint);
+				MakeSpring(points[0], newPoint, 1.0f);
 
 			if (!points[1]->GetDetached())
-				MakeSpring(points[1], newPoint);
+				MakeSpring(points[1], newPoint, 1.0f);
 
 			if (points[0]->GetDetached() && points[1]->GetDetached())
 			{
-				MakeSpring(points[0], newPoint);
-				MakeSpring(points[1], newPoint);
+				MakeSpring(points[0], newPoint, 1.0f);
+				MakeSpring(points[1], newPoint, 1.0f);
 			}
 
 

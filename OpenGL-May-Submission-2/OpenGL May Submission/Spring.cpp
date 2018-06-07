@@ -1,12 +1,17 @@
 #include "Spring.h"
 
-Spring::Spring(Point * _point1, Point * _point2)
+Spring::Spring(Point * _point1, Point * _point2, float _restingDistance)
 	:
 	m_pPoint1(_point1),
 	m_pPoint2(_point2)
 {
-	glm::vec3 vector = _point1->GetPosition() - _point2->GetPosition();
-	m_fRestDistance = glm::length(vector);
+	if (_restingDistance > 0.1)
+		m_fRestDistance = _restingDistance;
+	else
+	{
+		glm::vec3 vector = _point1->GetPosition() - _point2->GetPosition();
+		m_fRestDistance = glm::length(vector);
+	}
 }
 
 void Spring::SatisfyConstraint()
@@ -17,15 +22,10 @@ void Spring::SatisfyConstraint()
 		float pointDistance = glm::length(pointVector);
 
 
-		if (pointDistance > m_fRestDistance + 0.5f)
+		if (pointDistance > m_fRestDistance * 2.0f)
 		{
 			m_pPoint1->m_bOverExtended = true;
 			m_pPoint2->m_bOverExtended = true;
-		}
-		else
-		{
-			m_pPoint1->m_bOverExtended = false;
-			m_pPoint2->m_bOverExtended = false;
 		}
 
 		glm::vec3 correctionVector = pointVector * (1 - m_fRestDistance / pointDistance);
