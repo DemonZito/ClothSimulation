@@ -191,8 +191,8 @@ bool Game::Initialize()
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
-	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
+
+	// Create Floor
 	
 	//UI Stuff
 	m_UIText.push_back(new Text(glm::vec2(520, 190),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
@@ -558,8 +558,6 @@ void Game::UpdateSliders()
 		{
 			delete m_pCloth;
 			m_bGameOver = false;
-			m_windDirection = glm::vec3(0, 0, 0);
-			m_windStrength = 1.0f;
 			m_clothLength = 15;
 			m_clothWidth = 15;
 			m_numOfHooks = 4;
