@@ -191,8 +191,8 @@ bool Game::Initialize()
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	//textLavel = new Text(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec3(1.0, 0.0, 0.0), "Hello?", "Resources/Fonts/SequentialSans.ttf", g_mapShaders[TEXT]);
-	//sprit = new Sprite("Resources/Textures/best.PNG", glm::vec2(0, 0), glm::vec2(250, 250), glm::vec3(1, 1, 1), g_mapShaders[SPRITE]);
+
+	// Create Floor
 	
 	//UI Stuff
 	m_UIText.push_back(new Text(glm::vec2(520, 190),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
@@ -218,10 +218,26 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(10, 670), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 630), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Reset:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
-	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
-	//m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(10, 135), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Numb of Hooks Knob
-	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(520, 755), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Wind Speed Knob
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(630, 755), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Wind Speed Knob
+
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(620, 775), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Reset Wind
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(60, 155), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Reset Cloth
+
+	// Wind Buttons
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(595, 635), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // North
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(650, 653), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // North East
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(650, 675), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // East
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(650, 695), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // South East
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(510, 653), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // North West
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(510, 675), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // West
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(510, 695), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // South West
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(595, 715), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // South
+
+	// Hooks
+	m_UISprites.push_back(new Sprite("Resources/Textures/Minus.png", glm::vec2(70, 115), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Minus							
+	m_UISprites.push_back(new Sprite("Resources/Textures/Plus.png", glm::vec2(100, 115), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Plus
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -366,10 +382,6 @@ void Game::HandleKeyboardInput()
 
 	}
 
-	if (Input::Instance().GetKeyDown(GLFW_KEY_SPACE)) {
-		m_pCamera->SetPosition(glm::vec3(m_pCamera->GetPosition().x, m_pCamera->GetPosition().y + 0.002f, m_pCamera->GetPosition().z));
-	}
-
 	if (Input::Instance().GetKeyDown(GLFW_KEY_D)) {
 		m_pCamera->SetPosition(glm::normalize(glm::cross(m_pCamera->GetFront(), m_pCamera->GetCameraUp()))* m_pCamera->GetCameraSpeed());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -415,7 +427,6 @@ void Game::HandleKeyboardInput()
 	//Reset Wind
 	if (Input::Instance().GetKeyDown(GLFW_KEY_H)) {
 		m_windDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-		m_windStrength = 0.0f;
 	}
 
 	// Wind Strength
@@ -494,6 +505,9 @@ void Game::HandleKeyboardInput()
 		m_clothWidth = 15;
 		m_numOfHooks = 4;
 		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+		m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
+		m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
+		m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
 	}
 }
 
@@ -507,27 +521,154 @@ void Game::UpdateSliders()
 	if (glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
 	{
 		// Cloth Length
-		if (m_mousePos.x > 10 && m_mousePos.x < 250 && m_mousePos.y > 55 && m_mousePos.y < 75)
+		if (m_mousePos.x > 10 && m_mousePos.x < 300 && m_mousePos.y > 55 && m_mousePos.y < 75)
 		{
 			m_UISprites.at(0)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(0)->GetPosition().y));
+			m_clothLength = ((m_mousePos.x - 10) / 10) + 1;
+			delete m_pCloth;
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 		}
 
 		// Cloth Width
-		if (m_mousePos.x > 10 && m_mousePos.x < 250 && m_mousePos.y > 95 && m_mousePos.y < 115)
+		if (m_mousePos.x > 10 && m_mousePos.x < 300 && m_mousePos.y > 95 && m_mousePos.y < 115)
 		{
 			m_UISprites.at(1)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(1)->GetPosition().y));
+			m_clothWidth = ((m_mousePos.x - 10) / 10) + 1;
+			delete m_pCloth;
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 		}
 
 		// Wind Strength
 		if (m_mousePos.x > 520 && m_mousePos.x < 760 && m_mousePos.y > 750 && m_mousePos.y < 770)
 		{
 			m_UISprites.at(2)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(2)->GetPosition().y));
+			m_windStrength = (m_mousePos.x - 520) / 100;
 		}
 
-		// Num of Hooks
-		//if (m_mousePos.x > 10 && m_mousePos.x < 250 && m_mousePos.y > 135 && m_mousePos.y < 155)
-		//{
-		//	m_UISprites.at(2)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(2)->GetPosition().y));
-		//}
+		// Wind Reset
+		if ((m_mousePos.x > m_UISprites.at(3)->GetPosition().x) 
+			&& (m_mousePos.x < m_UISprites.at(3)->GetPosition().x + 20) 
+			&& (m_mousePos.y > m_UISprites.at(3)->GetPosition().y) 
+			&& (m_mousePos.y < m_UISprites.at(3)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+
+		// Reset Cloth
+		if ((m_mousePos.x > m_UISprites.at(4)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(4)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(4)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(4)->GetPosition().y + 20))
+		{
+			delete m_pCloth;
+			m_bGameOver = false;
+			m_clothLength = 15;
+			m_clothWidth = 15;
+			m_numOfHooks = 4;
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
+			m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
+			m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
+		}
+
+		
+		// Winds
+		// North
+		if ((m_mousePos.x > m_UISprites.at(5)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(5)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(5)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(5)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.0f, 0.0f, 0.1f);
+		}
+		// North East
+		if ((m_mousePos.x > m_UISprites.at(6)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(6)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(6)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(6)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(-0.1f, 0.0f, 0.1f);
+		}
+		// East
+		if ((m_mousePos.x > m_UISprites.at(7)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(7)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(7)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(7)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(-0.1f, 0.0f, 0.0f);
+		}
+		// South East
+		if ((m_mousePos.x > m_UISprites.at(8)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(8)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(8)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(8)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(-0.1f, 0.0f, -0.1f);
+		}
+		// North West
+		if ((m_mousePos.x > m_UISprites.at(9)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(9)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(9)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(9)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.1f, 0.0f, 0.1f);
+		}
+		// West
+		if ((m_mousePos.x > m_UISprites.at(10)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(10)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(10)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(10)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.1f, 0.0f, 0.0f);
+		}
+		// South West
+		if ((m_mousePos.x > m_UISprites.at(11)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(11)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(11)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(11)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.1f, 0.0f, -0.1f);
+		}
+		// South
+		if ((m_mousePos.x > m_UISprites.at(12)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(12)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(12)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(12)->GetPosition().y + 20))
+		{
+			m_windDirection = glm::vec3(0.0f, 0.0f, -0.1f);
+		}
+
+		if (!m_mouseClickDown)
+		{
+			m_mouseClickDown = true;
+			// Remove Hooks
+			if ((m_mousePos.x > m_UISprites.at(13)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(13)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(13)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(13)->GetPosition().y + 20))
+			{
+				if (m_clothWidth > 1)
+					--m_numOfHooks;
+				delete m_pCloth;
+				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			}
+
+
+			// Add Hooks
+			if ((m_mousePos.x > m_UISprites.at(14)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(14)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(14)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(14)->GetPosition().y + 20))
+			{
+				if (m_numOfHooks < m_clothWidth)
+					++m_numOfHooks;
+				delete m_pCloth;
+				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			}
+		}
+	}
+	else if (m_mouseClickDown)
+	{
+		m_mouseClickDown = false;
 	}
 }
