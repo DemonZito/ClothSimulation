@@ -25,7 +25,7 @@ void CCamera::SendDataToShaders(std::unordered_map<ShaderType, GLuint> _shaders)
 	glm::mat4 Ortho = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, 0.1f, 100.0f);
 
 	m_viewMatrix = glm::lookAtRH(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
-	m_perspectiveMatrix = glm::perspectiveRH(glm::radians(30.0f), aspectRatio, 1.0f, 100.0f);
+	m_perspectiveMatrix = glm::perspectiveRH(glm::radians(30.0f), aspectRatio, 1.0f, 10000.0f);
 
 	// send camera data to all shaders
 
