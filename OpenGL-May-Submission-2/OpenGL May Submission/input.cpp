@@ -34,3 +34,4 @@ glm::vec2 Input::MousePosition()
 	glfwGetCursorPos(m_pWindow, &mouseX, &mouseY);
 	return glm::vec2(mouseX, mouseY);
 }
+

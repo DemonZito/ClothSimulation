@@ -297,16 +297,20 @@ void Game::HandleMouseInput()
 				glfwSetCursorPos(m_pWindow, 400, 400);
 			}
 		}
+
+		// Mouse picking
 		if (!m_pGrabbedPoint && glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
 			UpdateMousePicking();
 		else if (m_pGrabbedPoint && glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
 		{
-			glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
+			/*glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
 			glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
 			viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
 
 			glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
-			m_pGrabbedPoint->SetPos(glm::vec3(newPos));
+			m_pGrabbedPoint->SetPos(glm::vec3(newPos));*/
+
+			m_pGrabbedPoint->m_bBurning = true;
 		}
 		else
 		{

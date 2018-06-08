@@ -25,6 +25,14 @@ void Point::Step()
 		m_oldPosition = temp;
 		m_acceleration = glm::vec3(0, 0, 0); // acceleration is reset since it HAS been translated into a change in position (and implicitely into velocity)	
 	}
+
+	if (m_bBurning && m_fBurnMeter > 0)
+		m_fBurnMeter -= GenerateRandomFloat(0.0f, 0.01f);
+	else if (!m_bOverExtended && !m_bDetached && m_bBurning && m_fBurnMeter <= 0)
+	{
+		m_bOverExtended = true;
+		m_bBurning = false;
+	}
 }
 
 void Point::ChangePos(const glm::vec3 _delta)

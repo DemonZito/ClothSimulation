@@ -34,6 +34,8 @@ public:
 	std::vector<int> m_iTriangleIdx;
 
 	bool m_bOverExtended = false;
+	float m_fBurnMeter = 1.0f;
+	bool m_bBurning = false;
 
 private:
 	glm::vec3 m_position;

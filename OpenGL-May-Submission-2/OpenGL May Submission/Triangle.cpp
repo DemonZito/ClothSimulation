@@ -103,15 +103,21 @@ bool Triangle::Step()
 	for (int i = 0; i < 3; i++)
 	{
 		m_vecVertices[i].Position = m_vecPoints[i]->GetPosition();
-		/*if (m_vecPoints[i]->GetDetached())
+		m_vecVertices[i].Color = glm::vec3(0.8f, 0.3f, 0.5f) *m_vecPoints[i]->m_fBurnMeter;
+
+		if (!m_bBurning && m_vecPoints[i]->m_fBurnMeter < 0.5f)
 		{
-			Point* newPoint = new Point(m_vecPoints[i]->GetPosition());
-			newPoint->SetLinks(m_vecPoints[i]->GetLinks());
-			newPoint->SetDetached(true);
-			newPoint->m_iTriangleIdx.push_back(m_iTriangleIdx);
-			m_vecPoints[i] = newPoint;
-			breakage =  false;
-		}*/
+			if(GenerateRandomFloat(0,1) < 0.3)
+				m_vecPoints[0]->m_bBurning = true;
+
+			if (GenerateRandomFloat(0, 1) < 0.3)
+				m_vecPoints[1]->m_bBurning = true;
+
+			if (GenerateRandomFloat(0, 1) < 0.3)
+				m_vecPoints[2]->m_bBurning = true;
+
+			m_bBurning = true;
+		}
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);

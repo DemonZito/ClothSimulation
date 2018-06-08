@@ -12,6 +12,14 @@
 #include "Sprite.h"
 #include "Slider.h"
 
+enum MouseMode
+{
+	PULL,
+	PUSH,
+	TEAR,
+	BURN
+};
+
 class Game
 {
 	// Public functions
@@ -76,5 +84,7 @@ private:
 	Point* m_pGrabbedPoint = nullptr;
 	glm::vec4 m_screenPoint;
 	glm::vec3 m_offset;
+
+	MouseMode m_mouseMode = BURN;
 };
 

@@ -34,5 +34,6 @@ private:
 	std::vector<Vertice> m_vecVertices;
 	bool m_bDetached = false;
 	int m_iTriangleIdx;
+	bool m_bBurning = false;
 };
 
