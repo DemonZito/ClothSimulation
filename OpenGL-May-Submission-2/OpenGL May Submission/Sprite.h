@@ -17,6 +17,10 @@ public:
 
 	void Render() const override;
 
+	void SetPosition(glm::vec2 position);
+
+	glm::vec2 GetPosition();
+
 private:
 	glm::vec3 m_color;
 	Texture* m_texture;

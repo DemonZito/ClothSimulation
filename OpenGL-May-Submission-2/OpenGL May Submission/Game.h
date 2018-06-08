@@ -25,6 +25,7 @@ public:
 	void HandleMouseInput();
 	void HandleKeyboardInput();
 	bool UpdateMousePicking();
+	void UpdateSliders();
 
 	GLFWwindow* GetWindow() { return m_pWindow; }
 

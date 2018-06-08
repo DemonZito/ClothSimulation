@@ -113,3 +113,13 @@ void Sprite::Render() const
 
 	glEnable(GL_DEPTH_TEST);
 }
+
+void Sprite::SetPosition(glm::vec2 position)
+{
+	m_position = position;
+}
+
+glm::vec2 Sprite::GetPosition()
+{
+	return m_position;
+}
