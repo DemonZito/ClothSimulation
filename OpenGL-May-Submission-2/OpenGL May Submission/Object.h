@@ -9,6 +9,7 @@ class Object
 public:
 	virtual ~Object();
 	virtual void Update();
+	Model GetModel();
 	virtual void Render();
 
 protected:

@@ -37,9 +37,12 @@ public:
 	float m_fBurnMeter = 1.0f;
 	bool m_bBurning = false;
 
+	glm::vec3 m_oldPosition;
+	glm::vec3 m_oldestPosition;
+
+
 private:
 	glm::vec3 m_position;
-	glm::vec3 m_oldPosition;
 	glm::vec3 m_acceleration;
 	float m_fMass;
 	glm::vec3 m_normal;

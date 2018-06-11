@@ -20,6 +20,11 @@ void Object::Update()
 {
 }
 
+Model Object::GetModel()
+{
+	return *m_pModel.get();
+}
+
 void Object::Render()
 {
 	glUseProgram(m_shader);

@@ -182,6 +182,10 @@ bool Game::Initialize()
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 
+	m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
+	m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
+	m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
+	m_pPyramid->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
 	// Create Floor
 	
 	//UI Stuff
@@ -315,7 +319,9 @@ void Game::Update()
 	m_pCloth->FloorCollision();
 	m_pCloth->SelfCollision();
 	if(m_pSphere)
-		m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
+		m_pCloth->ballCollision(m_pSphere->GetPosition(), 3.2f);
+	if (m_pPyramid)
+		m_pCloth->pyramidCollision(m_pPyramid->GetPosition() , m_pPyramid->GetModel());
 	Input::Instance().Clear();
 }
 
@@ -381,6 +387,29 @@ void Game::HandleKeyboardInput()
 			//m_pCloth->MoveClothPoint(glm::vec3(0, 0, -1));
 		}
 	}
+
+	if (m_pPyramid != nullptr)
+	{
+		glm::vec3 monsterPos = m_pPyramid->GetPosition();
+
+		// Movement of the monster/player
+		float monsterY = -10.0f;
+
+		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
+			m_pPyramid->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+		}
+		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
+			m_pPyramid->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
+			m_pPyramid->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
+			m_pPyramid->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+		}
+	}
+
+
 	// Movement of camera
 	if (Input::Instance().GetKeyDown(GLFW_KEY_W)) {
 		m_pCamera->SetPosition(m_pCamera->GetFront() * m_pCamera->GetCameraSpeed());

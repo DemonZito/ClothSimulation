@@ -53,12 +53,27 @@ public:
 		}
 	}
 
+	std::vector<std::vector<Vertex>> GetTriangles()
+	{
+		std::vector<std::vector<Vertex>> triangles;
+		for (int i = 0; i < (meshes[0].indices.size() / 3); i++)
+		{
+			std::vector<Vertex> singleTriangle;
+			singleTriangle.push_back(meshes[0].vertices[i * 3]);
+			singleTriangle.push_back(meshes[0].vertices[i * 3 + 1]);
+			singleTriangle.push_back(meshes[0].vertices[i * 3 + 2]);
+
+			triangles.push_back(singleTriangle);
+		}
+		return triangles;
+	}
+
 private:
 	/*  Model Data  */
 	vector<Mesh> meshes;
 	string directory;
 	vector<TTexture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-
+	std::vector<std::vector<glm::vec3>> triangles;
 										/*  Functions   */
 										// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string path)
@@ -143,7 +158,7 @@ private:
 			aiFace face = mesh->mFaces[i];
 			// Retrieve all indices of the face and store them in the indices vector
 			for (GLuint j = 0; j < face.mNumIndices; j++)
-				indices.push_back(face.mIndices[j]);
+			indices.push_back(face.mIndices[j]);
 		}
 		// Process materials
 		if (mesh->mMaterialIndex >= 0)

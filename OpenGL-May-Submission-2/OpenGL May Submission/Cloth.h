@@ -16,6 +16,7 @@ public:
 	void FloorCollision();
 	void MoveClothPoint(glm::vec3 delta);
 	void ballCollision(const glm::vec3 center, const float radius);
+	void pyramidCollision(const glm::vec3 center, Model pyramid);
 	void Step();
 	void Render();
 
@@ -40,7 +41,7 @@ private:
 
 	int m_iWidth, m_iHeight;
 	float m_fStiffness = 1.0f;
-	float m_fPointRadius = 1.5f;
+	float m_fPointRadius = 0.8f;
 
 	// OpenGL
 	std::vector<Triangle*> m_vecTriangles;

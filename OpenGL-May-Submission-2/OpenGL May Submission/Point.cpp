@@ -22,6 +22,7 @@ void Point::Step()
 	{
 		glm::vec3 temp = m_position;
 		m_position = m_position + 0.99f * (m_position - m_oldPosition) + (m_acceleration * pow(g_kfTimeStep, 2));//m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
+		m_oldestPosition = m_oldPosition;
 		m_oldPosition = temp;
 		m_acceleration = glm::vec3(0, 0, 0); // acceleration is reset since it HAS been translated into a change in position (and implicitely into velocity)	
 	}

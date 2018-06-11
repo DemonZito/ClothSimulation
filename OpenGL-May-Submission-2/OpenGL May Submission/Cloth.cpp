@@ -150,7 +150,41 @@ void Cloth::ballCollision(const glm::vec3 center, const float radius)
 
 		if (l < radius)
 		{
-			(*point).ChangePos(glm::normalize(v) * (radius + 0.5f - l));
+			(*point).ChangePos(glm::normalize(v) * (radius - l));
+		}
+	}
+}
+
+void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
+{
+	// Get Triangles from pyramind
+	std::vector<std::vector<Vertex>> triangles = pyramid.GetTriangles();
+
+	// For each plane, do a point and plane collision with every point in the cloth
+	for (auto point = m_points.begin(); point != m_points.end(); point++)
+	{
+		float dProduct = 0;
+		bool result = false;
+		for (int i = 0; i < triangles.size(); ++i)
+		{
+			glm::vec3 v = (*point).GetPosition() - triangles.at(i).at(0).Position;
+			dProduct = glm::dot(v, triangles.at(i).at(0).Normal);				
+			result = (dProduct > 0);
+			if (result) // The point is not behind one of the plains, stop checking for collision
+				break;
+		}
+		// The point is intersecting with the pyramid
+		if (!result)
+		{
+			std::cout << "Coolide";
+			if((*point).m_oldestPosition != (*point).GetPosition())
+				(*point).SetPos((*point).m_oldestPosition);
+			else
+			{
+				glm::vec3 v = (*point).GetPosition() - center;
+				float l = glm::length(v);
+				(*point).ChangePos(glm::normalize(v) * (dProduct - l));
+			}
 		}
 	}
 }
@@ -263,13 +297,11 @@ void Cloth::Tear(Point* _pt)
 
 			if (!points[0]->GetDetached())
 			{
-				points[0]->RemoveLink(_pt);
 				MakeSpring(points[0], newPoint, 1.0f);
 			}
 
 			if (!points[1]->GetDetached())
 			{
-				points[1]->RemoveLink(_pt);
 				MakeSpring(points[1], newPoint, 1.0f);
 			}
 
@@ -373,35 +405,41 @@ void Cloth::SelfCollision()
 		std::vector<Point*> points = m_vecTriangles.at(i)->GetPoints();
 		for (int j = 0; j < m_vecTriangles.at(i)->GetPoints().size(); ++j)
 		{
-			// Cycle over all points in cloth
-			for (auto point = m_points.begin(); point != m_points.end(); point++)
+			if (!points.at(j)->GetDetached())
 			{
-				// Check it isnt itself
-				if (points.at(j) == &(*point))
+				// Cycle over all points in cloth
+				for (auto point = m_points.begin(); point != m_points.end(); point++)
 				{
-					continue;
-				}
-				bool isConnected = false;
-				// Check it isnt a point connected to self
-				std::vector<Point*> links = points.at(j)->GetLinks();
+					//Check if the point is detatched
+					//if (point->GetDetached())
+					//	continue;
+					// Check it isnt itself
+					if (points.at(j) == &(*point))
+						continue;
 
-				for (int k = 0; k < links.size(); ++k)
-				{
-					if (links.at(k) == &(*point))
+					bool isConnected = false;
+					// Check it isnt a point connected to self
+					std::vector<Point*> links = points.at(j)->GetLinks();
+
+					for (int k = 0; k < links.size(); ++k)
 					{
-						isConnected = true;
+						if (links.at(k) == &(*point))
+						{
+							isConnected = true;
+						}
+					}
+					if (isConnected)
+						continue;
+					glm::vec3 v = points.at(j)->GetPosition() - point->GetPosition();
+					float l = glm::length(v);
+
+					if (l < m_fPointRadius)
+					{
+						points.at(j)->ChangePos(glm::normalize(v) * (m_fPointRadius - l));
 					}
 				}
-				if (isConnected)
-					continue;
-				glm::vec3 v = points.at(j)->GetPosition() - point->GetPosition();
-				float l = glm::length(v);
-
-				if (l < m_fPointRadius)
-				{
-					points.at(j)->ChangePos(glm::normalize(v) * (m_fPointRadius - l));
-				}
 			}
+			
 		}
 	}
 }
