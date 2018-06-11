@@ -155,6 +155,53 @@ void Cloth::ballCollision(const glm::vec3 center, const float radius)
 	}
 }
 
+float GetDist(glm::vec3 u, glm::vec3 v)
+{
+	glm::vec3 diff = u - v;
+	return glm::sqrt(glm::dot(diff, diff));
+}
+
+void Cloth::CapsuleCollision(glm::vec3 pt1, glm::vec3 pt2, float lengthsq, float radius)
+{
+	for (auto point = m_points.begin(); point != m_points.end(); point++)
+	{
+			glm::vec3 v = pt2 - pt1;
+			glm::vec3 w = (*point).GetPosition() - pt1;
+			float closestDistance = 0;
+
+			float c1 = dot(w, v);
+			if (c1 <= 0)
+			{
+				closestDistance = GetDist((*point).GetPosition(), pt1);
+				if (closestDistance < radius)
+				{
+					(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
+				}
+			}
+
+			float c2 = dot(v, v);
+			if (c2 <= c1)
+			{
+				closestDistance = GetDist((*point).GetPosition(), pt2);
+
+				if (closestDistance < radius)
+				{
+					(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
+				}
+			}
+
+			float b = c1 / c2;
+			glm::vec3 Pb = pt1 + b * v;
+			closestDistance = GetDist((*point).GetPosition(), Pb);
+		
+			if (closestDistance < radius)
+			{
+				std::cout << closestDistance << std::endl;
+				//(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
+			}
+	}
+}
+
 void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 {
 	// Get Triangles from pyramind
@@ -187,7 +234,7 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 
 			glm::vec3 v = (*point).GetPosition() - center;
 			float l = glm::length(v);
-			(*point).ChangePos(glm::normalize(v) * (0.5f - l));
+			(*point).ChangePos(glm::normalize(v) * (2.0f - l));
 		}
 	}
 }

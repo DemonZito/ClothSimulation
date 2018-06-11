@@ -8,6 +8,7 @@
 #include "Cloth.h"
 #include "Sphere.h"
 #include "Pyramid.h"
+#include "Capsule.h"
 //#include "Text.h"
 #include "Sprite.h"
 #include "Slider.h"
@@ -63,6 +64,7 @@ private:
 	Cloth* m_pCloth;
 	Sphere* m_pSphere;
 	Pyramid* m_pPyramid;
+	Capsule* m_pCapsule;
 	//Sprite* sprit;
 	//Slider* m_testSlider;
 
