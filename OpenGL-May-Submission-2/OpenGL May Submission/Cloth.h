@@ -9,7 +9,7 @@
 class Cloth : public Object
 {
 public:
-	Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader);
+	Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader, float _stiffness);
 	~Cloth();
 
 	void AddForce(const glm::vec3 _force);
