@@ -2,8 +2,9 @@
 
 
 
-Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader)
+Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader, float _stiffness)
 	:
+	m_fStiffness(_stiffness)
 	m_iWidth(_pointDensityX),
 	m_iHeight(_pointDensityY),
 	Object(_shader)
@@ -232,7 +233,7 @@ Point* Cloth::GetPoint(int _x, int _y)
 
 void Cloth::MakeSpring(Point* _point1, Point* _point2, float _restingDistance)
 {
-	 m_springs.push_back(Spring(_point1, _point2, _restingDistance));
+	 m_springs.push_back(Spring(_point1, _point2, _restingDistance, m_fStiffness));
 	 _point1->AddLink(_point2);
 	 _point2->AddLink(_point1);
 }
@@ -347,4 +348,12 @@ glm::vec3 Cloth::CalculateTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
 	glm::vec3 v2 = _p2->GetPosition() - _p0->GetPosition();
 
 	return glm::cross(v1, v2);
+}
+
+void Cloth::ChangeStiffness(float _stiffness)
+{
+	m_fStiffness = _stiffness;
+	for (auto constraint = m_springs.begin(); constraint != m_springs.end(); constraint++) {
+		(*constraint).m_fStiffness = _stiffness;
+	}
 }
