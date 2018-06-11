@@ -222,7 +222,7 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(540, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "No Object", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(540, 730), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Sphere", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(540, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Capsule", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	//m_UIText.push_back(new Text(glm::vec2(540, 690), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pyramid", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(540, 690), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pyramid", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UIText.push_back(new Text(glm::vec2(10, 590), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Cloth Stiffness:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
@@ -257,6 +257,7 @@ bool Game::Initialize()
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 35), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // No Object
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Sphere
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 75), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cylinder
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pyramid
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(80, 215), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cloth stiffness
 
@@ -324,7 +325,7 @@ void Game::Update()
 	if (m_pCapsule)
 	{
 		glm::vec3 capsulePos = m_pCapsule->GetPosition();
-		m_pCloth->CapsuleCollision(glm::vec3(capsulePos.x + 1.5f, capsulePos.y, capsulePos.z), glm::vec3(capsulePos.x - 1.5f, capsulePos.y, capsulePos.z), 0, 2);
+		m_pCloth->CapsuleCollision(glm::vec3(capsulePos.x + 0.5f, capsulePos.y, capsulePos.z), glm::vec3(capsulePos.x - 0.5f, capsulePos.y, capsulePos.z), 0, 2.0f);
 
 	}
 	Input::Instance().Clear();
@@ -357,7 +358,7 @@ void Game::HandleMouseInput()
 		{
 			if (m_pGrabbedPoint)
 			{
-				m_pGrabbedPoint->SetFixed(false);
+				m_pGrabbedPoint->RevertFixedState();
 				m_pGrabbedPoint = nullptr;
 			}
 
@@ -570,7 +571,7 @@ void Game::UpdateSliders()
 		// Cloth Stiffness
 		if (m_mousePos.x > 10 && m_mousePos.x < 150 && m_mousePos.y > 215 && m_mousePos.y < 235)
 		{
-			m_UISprites.at(22)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(22)->GetPosition().y));
+			m_UISprites.at(23)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(23)->GetPosition().y));
 			m_stiffyness = ((m_mousePos.x - 10) / 100) + 0.5f;
 			m_pCloth->ChangeStiffness(m_stiffyness);
 		}
@@ -600,7 +601,7 @@ void Game::UpdateSliders()
 			m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
 			m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
 			m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
-			m_UISprites.at(22)->SetPosition(glm::vec2(80, 215));
+			m_UISprites.at(23)->SetPosition(glm::vec2(80, 215));
 		}
 
 		
@@ -679,7 +680,7 @@ void Game::UpdateSliders()
 		{
 			m_mouseMode = PULL;
 		}
-		// Pull
+		// push
 		if ((m_mousePos.x > m_UISprites.at(16)->GetPosition().x)
 			&& (m_mousePos.x < m_UISprites.at(16)->GetPosition().x + 20)
 			&& (m_mousePos.y > m_UISprites.at(16)->GetPosition().y)
@@ -687,7 +688,7 @@ void Game::UpdateSliders()
 		{
 			m_mouseMode = PUSH;
 		}
-		// Pull
+		// tear
 		if ((m_mousePos.x > m_UISprites.at(17)->GetPosition().x)
 			&& (m_mousePos.x < m_UISprites.at(17)->GetPosition().x + 20)
 			&& (m_mousePos.y > m_UISprites.at(17)->GetPosition().y)
@@ -695,7 +696,7 @@ void Game::UpdateSliders()
 		{
 			m_mouseMode = TEAR;
 		}
-		// Pull
+		// burn
 		if ((m_mousePos.x > m_UISprites.at(18)->GetPosition().x)
 			&& (m_mousePos.x < m_UISprites.at(18)->GetPosition().x + 20)
 			&& (m_mousePos.y > m_UISprites.at(18)->GetPosition().y)
@@ -713,7 +714,7 @@ void Game::UpdateSliders()
 				&& (m_mousePos.y > m_UISprites.at(13)->GetPosition().y)
 				&& (m_mousePos.y < m_UISprites.at(13)->GetPosition().y + 20))
 			{
-				if (m_clothWidth > 1)
+				if (m_clothWidth > 1 && m_numOfHooks > 0)
 					--m_numOfHooks;
 				delete m_pCloth;
 				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
@@ -797,6 +798,30 @@ void Game::UpdateSliders()
 				m_pCapsule = dynamic_cast<Capsule*>(m_vecObjects[m_vecObjects.size() - 1].get());
 				m_pCapsule->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
 				m_pCapsule->SetScale(glm::vec3(2.0f, 2.0f, 2.0f));
+			}
+
+			// pyramid
+			if ((m_mousePos.x > m_UISprites.at(22)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(22)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(22)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(22)->GetPosition().y + 20))
+			{
+				for (int i = 0; i < m_vecObjects.size();)
+				{
+					if (m_vecObjects.at(i).get() == m_pSphere)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pPyramid)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pCapsule)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else
+						i++;
+				}
+
+				m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
+				m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
+				m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
+				m_pPyramid->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
 			}
 		}
 	}
