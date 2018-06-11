@@ -79,6 +79,7 @@ private:
 	int m_clothLength;
 	int m_clothWidth;
 	int m_numOfHooks;
+	float m_stiffyness;
 
 	bool m_mouseCameraControl; // The bool to check if the mouse should lock with the camera
 	bool m_mouseLockButtonDown; // Bool check so you dont press buttons more than once

@@ -219,6 +219,8 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(540, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Capsule", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	//m_UIText.push_back(new Text(glm::vec2(540, 690), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pyramid", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
+	m_UIText.push_back(new Text(glm::vec2(10, 590), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Cloth Stiffness:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(630, 755), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Wind Speed Knob
@@ -250,6 +252,8 @@ bool Game::Initialize()
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 35), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // No Object
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Sphere
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 75), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cylinder
+
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 215), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cloth stiffness
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -505,6 +509,13 @@ void Game::UpdateSliders()
 		{
 			m_UISprites.at(2)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(2)->GetPosition().y));
 			m_windStrength = (m_mousePos.x - 520) / 100;
+		}
+
+		// Cloth Stiffness
+		if (m_mousePos.x > 10 && m_mousePos.x < 150 && m_mousePos.y > 215 && m_mousePos.y < 235)
+		{
+			m_UISprites.at(22)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(22)->GetPosition().y));
+			m_stiffyness = ((m_mousePos.x - 10) / 100) + 0.5f;
 		}
 
 		// Wind Reset
