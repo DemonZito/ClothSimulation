@@ -18,7 +18,8 @@ enum MouseMode
 	PULL,
 	PUSH,
 	TEAR,
-	BURN
+	BURN,
+	PIN
 };
 
 class Game

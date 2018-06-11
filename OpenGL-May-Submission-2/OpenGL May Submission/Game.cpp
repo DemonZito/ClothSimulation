@@ -218,6 +218,7 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(30, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Push", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 60), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Tear", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 40), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Fire", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 20), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pin", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UIText.push_back(new Text(glm::vec2(520, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Object: (Arrow Keys to move)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(540, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "No Object", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
@@ -261,6 +262,7 @@ bool Game::Initialize()
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pyramid
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(80, 215), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cloth stiffness
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 765), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pin
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -532,7 +534,18 @@ void Game::ProcessMouseInteract()
 		m_pGrabbedPoint = nullptr;
 		break;
 	}
+	case PIN:
+	{
+		m_pGrabbedPoint->SetFixed(true);
 
+		glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
+		glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
+		viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
+
+		glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
+		m_pGrabbedPoint->SetPos(glm::vec3(newPos));
+		break;
+	}
 	}
 
 
@@ -704,6 +717,14 @@ void Game::UpdateSliders()
 			&& (m_mousePos.y < m_UISprites.at(18)->GetPosition().y + 20))
 		{
 			m_mouseMode = BURN;
+		}
+		// pin
+		if ((m_mousePos.x > m_UISprites.at(24)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(24)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(24)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(24)->GetPosition().y + 20))
+		{
+			m_mouseMode = PIN;
 		}
 
 		if (!m_mouseClickDown)
