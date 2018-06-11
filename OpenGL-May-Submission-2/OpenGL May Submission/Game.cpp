@@ -849,7 +849,7 @@ void Game::UpdateSliders()
 				m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
 				m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
 				m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
-				m_pPyramid->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
+				m_pPyramid->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 			}
 		}
 	}
