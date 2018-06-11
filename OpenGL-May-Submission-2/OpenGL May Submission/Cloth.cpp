@@ -170,7 +170,7 @@ void Cloth::Step()
 			GetPoint(x, y)->Step();
 			if (GetPoint(x, y)->m_bOverExtended)
 			{
-				PushCloth(GetPoint(x, y), glm::vec3(0,0,0));
+				Tear(GetPoint(x, y));
 			}
 		}
 	}
@@ -237,7 +237,7 @@ void Cloth::MakeSpring(Point* _point1, Point* _point2, float _restingDistance)
 	 _point2->AddLink(_point1);
 }
 
-void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
+void Cloth::Tear(Point* _pt)
 {
 	if (!_pt->GetDetached())
 	{
@@ -260,7 +260,7 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 			newPoint->SetDetached(true);
 			newPoint->m_iTriangleIdx = temp.m_iTriangleIdx;
 
-			if(!points[0]->GetDetached())
+			if (!points[0]->GetDetached())
 				MakeSpring(points[0], newPoint, 1.0f);
 
 			if (!points[1]->GetDetached())
@@ -296,9 +296,17 @@ void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
 			}
 
 		}
-		
+
 	}
-	
+}
+
+void Cloth::PushCloth(Triangle* _tri, glm::vec3 _direction)
+{
+	std::vector<Point*> points = _tri->GetPoints();
+	points[0]->AddForce(_direction * 10.0f);
+	points[1]->AddForce(_direction * 10.0f);
+	points[2]->AddForce(_direction * 10.0f);
+
 }
 
 void Cloth::windForce(const glm::vec3 direction)

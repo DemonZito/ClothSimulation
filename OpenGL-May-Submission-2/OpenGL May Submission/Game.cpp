@@ -81,11 +81,10 @@ bool Game::UpdateMousePicking()
 				}
 			}
 
-			//m_pCloth->PushCloth(closest, m_mouseRayDirection);
 			m_pGrabbedPoint = closest;	
+			m_pTriangle = triangles[i];
 			m_screenPoint = m_pCamera->GetViewMatrix() * glm::vec4(m_pGrabbedPoint->GetPosition(), 1.0);
 			m_offset = glm::vec3(glm::vec4(m_pGrabbedPoint->GetPosition(), 1.0f) - (m_pCamera->GetViewMatrix() * glm::vec4(m_mousePos.x, m_mousePos.y, m_screenPoint.z, 1.0f)));
-			m_pGrabbedPoint->SetFixed(true);
 
 			return true;
 		}
@@ -342,23 +341,14 @@ void Game::HandleMouseInput()
 			UpdateMousePicking();
 		else if (m_pGrabbedPoint && glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT))
 		{
-			/*glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
-			glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
-			viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
-
-			glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
-			m_pGrabbedPoint->SetPos(glm::vec3(newPos));*/
-
-			m_pGrabbedPoint->m_bBurning = true;
+			ProcessMouseInteract();
+			
 		}
 		else
 		{
 			if (m_pGrabbedPoint)
 			{
 				m_pGrabbedPoint->SetFixed(false);
-				/*if(m_pGrabbedPoint->m_bOverExtended)
-					m_pCloth->PushCloth(m_pGrabbedPoint, glm::vec3(0, 0, 0));*/
-
 				m_pGrabbedPoint = nullptr;
 			}
 
@@ -537,6 +527,47 @@ void Game::HandleKeyboardInput()
 void Game::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+void Game::ProcessMouseInteract()
+{
+	switch (m_mouseMode)
+	{
+	case PULL:
+	{
+		m_pGrabbedPoint->SetFixed(true);
+
+		glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
+		glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
+		viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
+
+		glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
+		m_pGrabbedPoint->SetPos(glm::vec3(newPos));
+		break;
+	}
+	case PUSH:
+	{
+		m_pCloth->PushCloth(m_pTriangle, m_mouseRayDirection);
+		m_pGrabbedPoint = nullptr;
+		break;
+	}
+	case BURN:
+	{
+		m_pGrabbedPoint->m_bBurning = true;
+		break;
+	}
+	case TEAR:
+	{
+		m_pCloth->Tear(m_pGrabbedPoint);
+		m_pGrabbedPoint = nullptr;
+		break;
+	}
+
+	}
+
+
+	/**/
+
 }
 
 void Game::UpdateSliders()
