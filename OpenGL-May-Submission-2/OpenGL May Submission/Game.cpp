@@ -762,11 +762,20 @@ void Game::UpdateSliders()
 				for (int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pSphere = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pPyramid = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pCapsule)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pCapsule = nullptr;
+					}
 					else
 						i++;
 				}
@@ -786,11 +795,20 @@ void Game::UpdateSliders()
 				for (int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pSphere = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pPyramid = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pCapsule)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pCapsule = nullptr;
+					}
 					else
 						i++;
 				}
@@ -810,11 +828,20 @@ void Game::UpdateSliders()
 				for (int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pSphere = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pPyramid = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pCapsule)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pCapsule = nullptr;
+					}
 					else
 						i++;
 				}

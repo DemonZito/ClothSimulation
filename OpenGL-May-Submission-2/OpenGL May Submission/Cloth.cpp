@@ -224,7 +224,7 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 		// The point is intersecting with the pyramid
 		if (!result)
 		{
-			std::cout << "Coolide";
+			std::cout << "Pyramid Colliding" << std::endl;
 			//if((*point).m_oldestPosition != (*point).GetPosition())
 			//	(*point).SetPos((*point).m_oldestPosition);
 			//else
