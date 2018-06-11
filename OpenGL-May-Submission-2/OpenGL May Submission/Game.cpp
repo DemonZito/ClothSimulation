@@ -208,15 +208,27 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(520, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Speed:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(520, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Reset Wind: ", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
-	m_UIText.push_back(new Text(glm::vec2(10, 50), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_UIText.push_back(new Text(glm::vec2(10, 30), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_UIText.push_back(new Text(glm::vec2(10, 10), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera Lock: (Q) Toggle On/Off", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 190), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 170), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Movement: (W),(A),(S),(D)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 150), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Camera Lock: (Q) Toggle On/Off", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UIText.push_back(new Text(glm::vec2(10, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Curtain Shape:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Length:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Width:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 670), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 630), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Reset:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	
+	m_UIText.push_back(new Text(glm::vec2(10, 120), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Mouse Modes:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 100), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pull", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Push", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 60), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Tearing", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 40), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Fire", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+
+	m_UIText.push_back(new Text(glm::vec2(520, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Object: (Arrow Keys to move)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(540, 750), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "No Object", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(540, 730), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Sphere", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(540, 710), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Capsule", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	//m_UIText.push_back(new Text(glm::vec2(540, 690), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pyramid", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
@@ -238,6 +250,17 @@ bool Game::Initialize()
 	// Hooks
 	m_UISprites.push_back(new Sprite("Resources/Textures/Minus.png", glm::vec2(70, 115), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Minus							
 	m_UISprites.push_back(new Sprite("Resources/Textures/Plus.png", glm::vec2(100, 115), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Plus
+
+	// Mouse Modes
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 685), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pull
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 705), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Push
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 725), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Tearing
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 745), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Fire
+
+	// Object spawning
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 35), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // No Object
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Sphere
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(520, 75), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cylinder
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
