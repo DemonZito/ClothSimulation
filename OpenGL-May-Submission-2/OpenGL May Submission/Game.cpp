@@ -176,16 +176,16 @@ bool Game::Initialize()
 	m_vecObjects.push_back(std::make_unique<Skybox>(strImagePaths, g_mapShaders[SKYBOX]));
 
 	// Create objects and player
-	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
+	//m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 
-	m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
-	m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
-	m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
-	m_pPyramid->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	//m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
+	//m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
+	//m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
+	//m_pPyramid->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	// Create Floor
 	
 	//UI Stuff
@@ -289,7 +289,6 @@ void Game::Render() const
 	for (int i = 0; i < m_vecObjects.size(); i++)
 		m_vecObjects[i]->Render();
 
-	m_pPlayer->Render();
 	m_pCloth->Render();
 
 	for (int i = 0; i < m_UIText.size(); ++i)
@@ -322,6 +321,12 @@ void Game::Update()
 		m_pCloth->ballCollision(m_pSphere->GetPosition(), 3.2f);
 	if (m_pPyramid)
 		m_pCloth->pyramidCollision(m_pPyramid->GetPosition() , m_pPyramid->GetModel());
+	if (m_pCapsule)
+	{
+		glm::vec3 capsulePos = m_pCapsule->GetPosition();
+		m_pCloth->CapsuleCollision(glm::vec3(capsulePos.x + 1.5f, capsulePos.y, capsulePos.z), glm::vec3(capsulePos.x - 1.5f, capsulePos.y, capsulePos.z), 0, 2);
+
+	}
 	Input::Instance().Clear();
 }
 
@@ -409,6 +414,26 @@ void Game::HandleKeyboardInput()
 		}
 	}
 
+	if (m_pCapsule != nullptr)
+	{
+		glm::vec3 monsterPos = m_pCapsule->GetPosition();
+
+		// Movement of the monster/player
+		float monsterY = -10.0f;
+
+		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
+			m_pCapsule->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+		}
+		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
+			m_pCapsule->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
+			m_pCapsule->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
+			m_pCapsule->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+		}
+	}
 
 	// Movement of camera
 	if (Input::Instance().GetKeyDown(GLFW_KEY_W)) {
@@ -720,6 +745,8 @@ void Game::UpdateSliders()
 						m_vecObjects.erase(m_vecObjects.begin() + i);
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pCapsule)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
 					else
 						i++;
 				}
@@ -736,6 +763,8 @@ void Game::UpdateSliders()
 						m_vecObjects.erase(m_vecObjects.begin() + i);
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pCapsule)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
 					else
 						i++;
 				}
@@ -744,6 +773,30 @@ void Game::UpdateSliders()
 				m_pSphere = dynamic_cast<Sphere*>(m_vecObjects[m_vecObjects.size() - 1].get());
 				m_pSphere->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
 				m_pSphere->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
+			}
+
+			// capsule
+			if ((m_mousePos.x > m_UISprites.at(21)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(21)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(21)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(21)->GetPosition().y + 20))
+			{
+				for (int i = 0; i < m_vecObjects.size();)
+				{
+					if (m_vecObjects.at(i).get() == m_pSphere)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pPyramid)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pCapsule)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else
+						i++;
+				}
+
+				m_vecObjects.push_back(std::make_unique<Capsule>(g_mapShaders[UNLIT_MODEL]));
+				m_pCapsule = dynamic_cast<Capsule*>(m_vecObjects[m_vecObjects.size() - 1].get());
+				m_pCapsule->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
+				m_pCapsule->SetScale(glm::vec3(2.0f, 2.0f, 2.0f));
 			}
 		}
 	}
