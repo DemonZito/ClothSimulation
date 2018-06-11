@@ -220,7 +220,7 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(10, 120), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Mouse Modes:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 100), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pull", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Push", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
-	m_UIText.push_back(new Text(glm::vec2(30, 60), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Tearing", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(30, 60), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Tear", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 40), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Fire", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UIText.push_back(new Text(glm::vec2(520, 770), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Object: (Arrow Keys to move)", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
@@ -312,7 +312,8 @@ void Game::Update()
 	glfwPollEvents();
 	HandleMouseInput();
 	HandleKeyboardInput();
-	UpdateSliders();
+	if(!m_pGrabbedPoint)
+		UpdateSliders();
 	m_pCloth->AddForce(glm::vec3(0.0f, -0.11f, 0.0f));
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
@@ -690,6 +691,40 @@ void Game::UpdateSliders()
 			&& (m_mousePos.y < m_UISprites.at(12)->GetPosition().y + 20))
 		{
 			m_windDirection = glm::vec3(0.0f, 0.0f, -0.1f);
+		}
+
+		//Mouse Types
+		// Pull
+		if ((m_mousePos.x > m_UISprites.at(15)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(15)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(15)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(15)->GetPosition().y + 20))
+		{
+			m_mouseMode = PULL;
+		}
+		// Pull
+		if ((m_mousePos.x > m_UISprites.at(16)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(16)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(16)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(16)->GetPosition().y + 20))
+		{
+			m_mouseMode = PUSH;
+		}
+		// Pull
+		if ((m_mousePos.x > m_UISprites.at(17)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(17)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(17)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(17)->GetPosition().y + 20))
+		{
+			m_mouseMode = TEAR;
+		}
+		// Pull
+		if ((m_mousePos.x > m_UISprites.at(18)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(18)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(18)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(18)->GetPosition().y + 20))
+		{
+			m_mouseMode = BURN;
 		}
 
 		if (!m_mouseClickDown)

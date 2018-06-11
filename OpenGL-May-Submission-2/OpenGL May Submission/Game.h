@@ -80,9 +80,9 @@ private:
 	int m_clothWidth;
 	int m_numOfHooks;
 
-	bool m_mouseCameraControl;
-	bool m_mouseLockButtonDown;
-	bool m_mouseClickDown;
+	bool m_mouseCameraControl; // The bool to check if the mouse should lock with the camera
+	bool m_mouseLockButtonDown; // Bool check so you dont press buttons more than once
+	bool m_mouseClickDown; // Bool check so you dont press buttons more than once
 
 	Point* m_pGrabbedPoint = nullptr;
 	Triangle* m_pTriangle = nullptr;
