@@ -177,16 +177,6 @@ bool Game::Initialize()
 	// Create objects and player
 	m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
 
-	m_vecObjects.push_back(std::make_unique<Sphere>(g_mapShaders[UNLIT_MODEL]));
-	m_pSphere = dynamic_cast<Sphere*>(m_vecObjects[m_vecObjects.size() - 1].get());
-	m_pSphere->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
-	m_pSphere->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
-
-	m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
-	m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
-	m_pPyramid->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
-	m_pPyramid->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
-
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
@@ -318,7 +308,8 @@ void Game::Update()
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	m_pCloth->FloorCollision();
-	m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
+	if(m_pSphere)
+		m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
 	Input::Instance().Clear();
 }
 
@@ -360,27 +351,30 @@ void Game::HandleMouseInput()
 
 void Game::HandleKeyboardInput()
 {
-	glm::vec3 monsterPos = m_pSphere->GetPosition();
+	if (m_pSphere != nullptr)
+	{
+		glm::vec3 monsterPos = m_pSphere->GetPosition();
 
-	// Movement of the monster/player
-	float monsterY= -10.0f;
-	if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
-		m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
-		//m_pCloth->MoveClothPoint(glm::vec3(0.1f, 0, 0));
+		// Movement of the monster/player
+		float monsterY = -10.0f;
+
+		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
+			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+			//m_pCloth->MoveClothPoint(glm::vec3(0.1f, 0, 0));
+		}
+		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
+			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+			//m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
+			m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+			//m_pCloth->MoveClothPoint(glm::vec3(0, 0, 1));
+
+		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
+			m_pSphere->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+			//m_pCloth->MoveClothPoint(glm::vec3(0, 0, -1));
+		}
 	}
-	if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
-		m_pSphere->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
-		//m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
-
-	}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
-		m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
-		//m_pCloth->MoveClothPoint(glm::vec3(0, 0, 1));
-
-	}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
-		m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
-		//m_pCloth->MoveClothPoint(glm::vec3(0, 0, -1));
-	}
-
 	// Movement of camera
 	if (Input::Instance().GetKeyDown(GLFW_KEY_W)) {
 		m_pCamera->SetPosition(m_pCamera->GetFront() * m_pCamera->GetCameraSpeed());
@@ -403,93 +397,6 @@ void Game::HandleKeyboardInput()
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_ESCAPE)) {
 		m_bGameOver = true;
-	}
-
-	// Winde Direction
-	if (Input::Instance().GetKeyDown(GLFW_KEY_T)) { // North West
-		m_windDirection = glm::vec3(0.1f, 0.0f, 0.1f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_Y)) { // North
-		m_windDirection = glm::vec3(0.0f, 0.0f, 0.1f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_U)) { // North East
-		m_windDirection = glm::vec3(-0.1f, 0.0f, 0.1f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_G)) { // West
-		m_windDirection = glm::vec3(0.1f, 0.0f, 0.0f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_J)) { // East
-		m_windDirection = glm::vec3(-0.1f, 0.0f, 0.0f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_B)) { // South West
-		m_windDirection = glm::vec3(0.1f, 0.0f, -0.1f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_N)) { // South
-		m_windDirection = glm::vec3(0.0f, 0.0f, -0.1f);
-	}
-
-	if (Input::Instance().GetKeyDown(GLFW_KEY_M)) { // South East
-		m_windDirection = glm::vec3(-0.1f, 0.0f, -0.1f);
-	}
-
-	//Reset Wind
-	if (Input::Instance().GetKeyDown(GLFW_KEY_H)) {
-		m_windDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-	}
-
-	// Wind Strength
-	if (Input::Instance().GetKeyDown(GLFW_KEY_L)) {
-		if (m_windStrength < 11.0f)
-			m_windStrength += 0.1f;
-	}
-	if (Input::Instance().GetKeyDown(GLFW_KEY_K)) {
-		if (m_windStrength > 0.0f)
-			m_windStrength -= 0.1f;
-	}
-
-	// Cloth length
-	if (Input::Instance().GetKeyDown(GLFW_KEY_1)) {
-		if(m_clothLength > 2)
-			--m_clothLength;
-		delete m_pCloth;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	}
-	if (Input::Instance().GetKeyDown(GLFW_KEY_2)) {
-		++m_clothLength;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	}
-
-	// Cloth Width
-	if (Input::Instance().GetKeyDown(GLFW_KEY_3)) {
-		if (m_clothWidth > 2)
-			--m_clothWidth;
-		delete m_pCloth;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	}
-	if (Input::Instance().GetKeyDown(GLFW_KEY_4)) {
-		++m_clothWidth;
-		delete m_pCloth;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	}
-
-	// Number of hooks
-	if (Input::Instance().GetKeyDown(GLFW_KEY_5)) {
-		if (m_clothWidth > 1)
-			--m_numOfHooks;
-		delete m_pCloth;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
-	}
-	if (Input::Instance().GetKeyDown(GLFW_KEY_6)) {
-		if(m_numOfHooks < m_clothWidth)
-			++m_numOfHooks;
-		delete m_pCloth;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
 	}
 
 	// Toggle mouse controls
@@ -753,6 +660,45 @@ void Game::UpdateSliders()
 					++m_numOfHooks;
 				delete m_pCloth;
 				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			}
+
+			// Objects
+			// No Object
+			if ((m_mousePos.x > m_UISprites.at(19)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(19)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(19)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(19)->GetPosition().y + 20))
+			{
+				for (int i = 0; i < m_vecObjects.size();)
+				{
+					if (m_vecObjects.at(i).get() == m_pSphere)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pPyramid)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else
+						i++;
+				}
+			}
+			// Sphere
+			if ((m_mousePos.x > m_UISprites.at(20)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(20)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(20)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(20)->GetPosition().y + 20))
+			{
+				for (int i = 0; i < m_vecObjects.size();)
+				{
+					if (m_vecObjects.at(i).get() == m_pSphere)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else if (m_vecObjects.at(i).get() == m_pPyramid)
+						m_vecObjects.erase(m_vecObjects.begin() + i);
+					else
+						i++;
+				}
+
+				m_vecObjects.push_back(std::make_unique<Sphere>(g_mapShaders[UNLIT_MODEL]));
+				m_pSphere = dynamic_cast<Sphere*>(m_vecObjects[m_vecObjects.size() - 1].get());
+				m_pSphere->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
+				m_pSphere->SetScale(glm::vec3(2.75f, 2.75f, 2.75f));
 			}
 		}
 	}
