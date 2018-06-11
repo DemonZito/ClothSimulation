@@ -507,7 +507,7 @@ void Game::ProcessMouseInteract()
 	{
 	case PULL:
 	{
-		m_pGrabbedPoint->SetFixed(true);
+		m_pGrabbedPoint->FixPoint();
 
 		glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
 		glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;

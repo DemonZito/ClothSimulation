@@ -9,6 +9,7 @@ Point::Point(glm::vec3 _pos)
 	m_acceleration(glm::vec3(0, 0, 0)),
 	m_bFixed(false)
 {
+	m_bOldFixed = false;
 }
 
 void Point::AddForce(glm::vec3 _force)
@@ -21,7 +22,7 @@ void Point::Step()
 	if (!m_bFixed)
 	{
 		glm::vec3 temp = m_position;
-		m_position = m_position + 0.8f * (m_position - m_oldPosition) + (m_acceleration * pow(g_kfTimeStep, 2));//m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
+		m_position = m_position + 0.9f * (m_position - m_oldPosition) + (m_acceleration * pow(g_kfTimeStep, 2));//m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
 		m_oldestPosition = m_oldPosition;
 		m_oldPosition = temp;
 		m_acceleration = glm::vec3(0, 0, 0); // acceleration is reset since it HAS been translated into a change in position (and implicitely into velocity)	
@@ -43,8 +44,13 @@ void Point::ChangePos(const glm::vec3 _delta)
 
 void Point::SetFixed(bool _isFixed)
 {
+	m_bOldFixed = _isFixed;
 	m_bFixed = _isFixed;
-	m_bOldFixed = m_bFixed;
+}
+
+void Point::FixPoint()
+{
+	m_bFixed = true;
 }
 
 bool Point::GetFixed()
@@ -105,4 +111,10 @@ void Point::RemoveLink(Point* _link)
 			i++;
 		}
 	}
+}
+
+void Point::RevertFixedState()
+{
+	std::cout << "old fixed is: " << m_bOldFixed << std::endl;
+	m_bFixed = m_bOldFixed;
 }
