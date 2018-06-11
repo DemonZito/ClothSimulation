@@ -511,7 +511,7 @@ void Game::ProcessMouseInteract()
 
 		glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
 		glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
-		viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
+		viewPos += glm::vec4(deltaMouse.x * 0.01f, -deltaMouse.y * 0.01f, 0.0f, 0.0f);
 
 		glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
 		m_pGrabbedPoint->SetPos(glm::vec3(newPos));
@@ -540,7 +540,7 @@ void Game::ProcessMouseInteract()
 
 		glm::vec4 viewPos = m_pCamera->GetViewMatrix() * glm::vec4{ m_pGrabbedPoint->GetPosition(), 1.0f };
 		glm::vec2 deltaMouse = m_mousePos - m_prevMousePos;
-		viewPos += glm::vec4(deltaMouse.x * 0.02f, -deltaMouse.y * 0.02f, 0.0f, 0.0f);
+		viewPos += glm::vec4(deltaMouse.x * 0.01f, -deltaMouse.y * 0.01f, 0.0f, 0.0f);
 
 		glm::vec4 newPos = glm::inverse(m_pCamera->GetViewMatrix()) * viewPos;
 		m_pGrabbedPoint->SetPos(glm::vec3(newPos));
