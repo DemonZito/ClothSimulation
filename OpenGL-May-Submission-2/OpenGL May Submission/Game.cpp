@@ -82,6 +82,7 @@ bool Game::UpdateMousePicking()
 			}
 
 			m_pGrabbedPoint = closest;	
+			m_pTriangle = triangles[i];
 			m_screenPoint = m_pCamera->GetViewMatrix() * glm::vec4(m_pGrabbedPoint->GetPosition(), 1.0);
 			m_offset = glm::vec3(glm::vec4(m_pGrabbedPoint->GetPosition(), 1.0f) - (m_pCamera->GetViewMatrix() * glm::vec4(m_mousePos.x, m_mousePos.y, m_screenPoint.z, 1.0f)));
 
@@ -523,7 +524,8 @@ void Game::ProcessMouseInteract()
 	}
 	case PUSH:
 	{
-		m_pCloth->PushCloth(m_pGrabbedPoint, m_mouseRayDirection);
+		m_pCloth->PushCloth(m_pTriangle, m_mouseRayDirection);
+		m_pGrabbedPoint = nullptr;
 		break;
 	}
 	case BURN:

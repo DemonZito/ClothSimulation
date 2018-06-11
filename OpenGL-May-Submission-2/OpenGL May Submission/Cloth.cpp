@@ -300,10 +300,13 @@ void Cloth::Tear(Point* _pt)
 	}
 }
 
-void Cloth::PushCloth(Point* _pt, glm::vec3 _direction)
+void Cloth::PushCloth(Triangle* _tri, glm::vec3 _direction)
 {
-	_pt->AddForce(_direction * 100.0f);
-	
+	std::vector<Point*> points = _tri->GetPoints();
+	points[0]->AddForce(_direction * 10.0f);
+	points[1]->AddForce(_direction * 10.0f);
+	points[2]->AddForce(_direction * 10.0f);
+
 }
 
 void Cloth::windForce(const glm::vec3 direction)

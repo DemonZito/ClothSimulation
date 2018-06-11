@@ -85,9 +85,10 @@ private:
 	bool m_mouseClickDown;
 
 	Point* m_pGrabbedPoint = nullptr;
+	Triangle* m_pTriangle = nullptr;
 	glm::vec4 m_screenPoint;
 	glm::vec3 m_offset;
 
-	MouseMode m_mouseMode = PULL;
+	MouseMode m_mouseMode = PUSH;
 };
 
