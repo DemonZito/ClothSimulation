@@ -10,6 +10,7 @@ public:
 	virtual ~Object();
 	virtual void Update();
 	Model GetModel();
+	void SetScale(glm::vec3 scale);
 	virtual void Render();
 
 protected:
