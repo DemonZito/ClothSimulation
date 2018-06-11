@@ -26,6 +26,7 @@ public:
 	void PushCloth(Triangle* _tri, glm::vec3 _direction);
 	void windForce(const glm::vec3 direction);
 	glm::vec3 CalculateTriangleNormal(Point *_p0, Point *_p1, Point* _p2);
+	void ChangeStiffness(float _stiffness);
 
 private:
 	glm::vec3 calcTriangleNormal(Point * _p0, Point * _p1, Point * _p2);
@@ -37,6 +38,7 @@ private:
 	std::vector<Spring> m_springs;
 
 	int m_iWidth, m_iHeight;
+	float m_fStiffness = 1.0f;
 
 	// OpenGL
 	std::vector<Triangle*> m_vecTriangles;

@@ -1,10 +1,12 @@
 #include "Spring.h"
 
-Spring::Spring(Point * _point1, Point * _point2, float _restingDistance)
+Spring::Spring(Point * _point1, Point * _point2, float _restingDistance, float _stiffness)
 	:
 	m_pPoint1(_point1),
 	m_pPoint2(_point2)
 {
+	m_fStiffness = _stiffness;
+
 	if (_restingDistance > 0.1)
 		m_fRestDistance = _restingDistance;
 	else
@@ -29,8 +31,12 @@ void Spring::SatisfyConstraint()
 		}
 
 		glm::vec3 correctionVector = pointVector * (1 - m_fRestDistance / pointDistance);
-		glm::vec3 correctionVectorHalf = correctionVector * 0.5f; // Lets make it half that length, so that we can move BOTH p1 and p2.
-		m_pPoint1->ChangePos(correctionVectorHalf); // correctionVectorHalf is pointing from p1 to p2, so the length should move p1 half the length needed to satisfy the constraint.
-		m_pPoint2->ChangePos(-correctionVectorHalf); // we must move p2 the negative direction of correctionVectorHalf since it points from p2 to p1, and not p1 to p2.
+		//glm::vec3 correctionVectorHalf = correctionVector * 0.5f; // Lets make it half that length, so that we can move BOTH p1 and p2.
+
+		float correctionWeight1 = 0.5f * m_fStiffness;
+		float correctionWeight2 = m_fStiffness - correctionWeight1;
+
+		m_pPoint1->ChangePos(correctionVector * correctionWeight1); // correctionVectorHalf is pointing from p1 to p2, so the length should move p1 half the length needed to satisfy the constraint.
+		m_pPoint2->ChangePos(-correctionVector * correctionWeight2); // we must move p2 the negative direction of correctionVectorHalf since it points from p2 to p1, and not p1 to p2.
 	}
 }
