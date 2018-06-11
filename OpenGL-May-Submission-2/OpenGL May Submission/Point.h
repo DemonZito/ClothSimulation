@@ -40,7 +40,7 @@ public:
 	glm::vec3 m_oldPosition;
 	glm::vec3 m_oldestPosition;
 
-
+	void RevertFixedState() { m_bFixed = m_bOldFixed; }
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_acceleration;
@@ -50,8 +50,9 @@ private:
 	int m_iX, m_iY;
 
 	bool m_bDetached = false;
-	bool m_bFixed;
-	
+	bool m_bFixed = false;
+	bool m_bOldFixed;
+
 	std::vector<Point*> m_vecLinks;
 };
 

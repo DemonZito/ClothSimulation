@@ -123,8 +123,10 @@ void Cloth::FloorCollision()
 		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
 		for (auto pt = points.begin(); pt != points.end(); pt++)
 		{
-			if ((*pt)->GetPosition().y < -30.0f){				
-				(*pt)->SetPos(glm::vec3((*pt)->GetPosition().x ,-30.0f, (*pt)->GetPosition().z));
+			if ((*pt)->GetPosition().y < -30.0f)
+			{
+				float diff = (*pt)->GetPosition().y - -30;
+				(*pt)->ChangePos(glm::vec3(0, 0.05f, 0));
 			}
 		}
 	}
@@ -190,15 +192,15 @@ void Cloth::CapsuleCollision(glm::vec3 pt1, glm::vec3 pt2, float lengthsq, float
 				}
 			}
 
-			float b = c1 / c2;
-			glm::vec3 Pb = pt1 + b * v;
-			closestDistance = GetDist((*point).GetPosition(), Pb);
+			//float b = c1 / c2;
+			//glm::vec3 Pb = pt1 + b * v;
+			//closestDistance = GetDist((*point).GetPosition(), Pb);
 		
-			if (closestDistance < radius)
-			{
-				std::cout << closestDistance << std::endl;
-				//(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
-			}
+			//if (closestDistance < radius)
+			//{
+			//	std::cout << closestDistance << std::endl;
+			//	//(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
+			//}
 	}
 }
 
