@@ -104,6 +104,7 @@ bool Game::Initialize()
 	m_numOfHooks = 4;
 	m_stiffyness = 1;
 	m_mouseCameraControl = false;
+	m_xrayMode = false;
 
 	// Init glfw
 	glfwInit();
@@ -213,6 +214,7 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(10, 670), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hooks:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 630), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Reset:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	
+	m_UIText.push_back(new Text(glm::vec2(30, 220), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "X-Ray Mode", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(10, 120), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Mouse Modes:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 100), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pull", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(30, 80), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Push", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
@@ -263,6 +265,7 @@ bool Game::Initialize()
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(80, 215), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cloth stiffness
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 765), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pin
+	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 565), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // XRay
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -295,6 +298,8 @@ void Game::Render() const
 
 	m_pCloth->Render();
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	for (int i = 0; i < m_UIText.size(); ++i)
 	{
 		m_UIText.at(i)->Render();
@@ -305,6 +310,8 @@ void Game::Render() const
 		m_UISprites.at(i)->Render();
 	}
 	//m_pPostProcessing->Draw();
+	if(m_xrayMode)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glfwSwapBuffers(m_pWindow);
 }
@@ -450,13 +457,10 @@ void Game::HandleKeyboardInput()
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_A)) {
 		m_pCamera->SetPosition(-(glm::normalize(glm::cross(m_pCamera->GetFront(), m_pCamera->GetCameraUp()))* m_pCamera->GetCameraSpeed()));
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_D)) {
 		m_pCamera->SetPosition(glm::normalize(glm::cross(m_pCamera->GetFront(), m_pCamera->GetCameraUp()))* m_pCamera->GetCameraSpeed());
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 	if (Input::Instance().GetKeyDown(GLFW_KEY_ESCAPE)) {
@@ -730,6 +734,20 @@ void Game::UpdateSliders()
 		if (!m_mouseClickDown)
 		{
 			m_mouseClickDown = true;
+			
+			// XRay Mode
+			if ((m_mousePos.x > m_UISprites.at(25)->GetPosition().x)
+				&& (m_mousePos.x < m_UISprites.at(25)->GetPosition().x + 20)
+				&& (m_mousePos.y > m_UISprites.at(25)->GetPosition().y)
+				&& (m_mousePos.y < m_UISprites.at(25)->GetPosition().y + 20))
+			{
+				if(m_xrayMode)
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				else
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				m_xrayMode = !m_xrayMode;
+			}
+			
 			// Remove Hooks
 			if ((m_mousePos.x > m_UISprites.at(13)->GetPosition().x)
 				&& (m_mousePos.x < m_UISprites.at(13)->GetPosition().x + 20)
