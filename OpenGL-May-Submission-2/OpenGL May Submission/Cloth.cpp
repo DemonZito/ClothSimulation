@@ -163,12 +163,11 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 	// For each plane, do a point and plane collision with every point in the cloth
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
 	{
-		float dProduct = 0;
 		bool result = false;
 		for (int i = 0; i < triangles.size(); ++i)
 		{
-			glm::vec3 v = (*point).GetPosition() - triangles.at(i).at(0).Position;
-			dProduct = glm::dot(v, triangles.at(i).at(0).Normal);				
+			glm::vec3 v = (*point).GetPosition();
+			float dProduct = glm::dot(v, triangles.at(i).at(0).Normal) - glm::dot(triangles.at(i).at(0).Normal, (triangles.at(i).at(0).Position + center));
 			result = (dProduct > 0);
 			if (result) // The point is not behind one of the plains, stop checking for collision
 				break;
@@ -177,14 +176,18 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 		if (!result)
 		{
 			std::cout << "Coolide";
-			if((*point).m_oldestPosition != (*point).GetPosition())
-				(*point).SetPos((*point).m_oldestPosition);
-			else
-			{
-				glm::vec3 v = (*point).GetPosition() - center;
-				float l = glm::length(v);
-				(*point).ChangePos(glm::normalize(v) * (dProduct - l));
-			}
+			//if((*point).m_oldestPosition != (*point).GetPosition())
+			//	(*point).SetPos((*point).m_oldestPosition);
+			//else
+			//{
+			//	glm::vec3 v = (*point).GetPosition() - center;
+			//	float l = glm::length(v);
+			//	(*point).ChangePos(glm::normalize(v) * (dProduct - l));
+			//}
+
+			glm::vec3 v = (*point).GetPosition() - center;
+			float l = glm::length(v);
+			(*point).ChangePos(glm::normalize(v) * (0.5f - l));
 		}
 	}
 }

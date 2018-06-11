@@ -23,6 +23,8 @@ protected:
 	glm::vec3 m_scale = glm::vec3(1, 1, 1);
 	glm::vec3 m_rotation;
 
+
+
 	std::unique_ptr<Texture> pTexture;
 	GLuint m_iScaleLocation, m_iRotateLocation, m_iTranslateLocation, m_icurrentTimeLocation;
 	GLuint m_shader;
