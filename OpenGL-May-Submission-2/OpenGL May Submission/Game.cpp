@@ -313,6 +313,7 @@ void Game::Update()
 	m_pCloth->windForce(m_windDirection * m_windStrength); // generate some wind each frame
 	m_pCloth->Step();
 	m_pCloth->FloorCollision();
+	m_pCloth->SelfCollision();
 	if(m_pSphere)
 		m_pCloth->ballCollision(m_pSphere->GetPosition(), 3);
 	Input::Instance().Clear();
