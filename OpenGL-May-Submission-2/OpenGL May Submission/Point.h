@@ -13,6 +13,7 @@ public:
 	void ChangePos(const glm::vec3 _delta);
 	void SetPos(glm::vec3 _newPos) { m_position = _newPos; }
 	void SetFixed(bool _isFixed);
+	void FixPoint();
 	bool GetFixed();
 	void ChangeNormal(glm::vec3 _delta);
 	void SetDetached(bool _isDetached) { m_bDetached = _isDetached; }
@@ -40,7 +41,7 @@ public:
 	glm::vec3 m_oldPosition;
 	glm::vec3 m_oldestPosition;
 
-	void RevertFixedState() { m_bFixed = m_bOldFixed; }
+	void RevertFixedState();
 private:
 	glm::vec3 m_position;
 	glm::vec3 m_acceleration;
