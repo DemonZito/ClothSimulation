@@ -102,6 +102,8 @@ bool Game::Initialize()
 	m_clothLength = 15;
 	m_clothWidth = 15;
 	m_numOfHooks = 4;
+	m_stiffyness = 1;
+
 	m_mouseCameraControl = false;
 
 	// Init glfw
@@ -179,7 +181,7 @@ bool Game::Initialize()
 
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
-	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 
 	// Create Floor
 	
@@ -429,7 +431,7 @@ void Game::HandleKeyboardInput()
 		m_clothLength = 15;
 		m_clothWidth = 15;
 		m_numOfHooks = 4;
-		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+		m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 		m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
 		m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
 		m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
@@ -492,7 +494,7 @@ void Game::UpdateSliders()
 			m_UISprites.at(0)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(0)->GetPosition().y));
 			m_clothLength = ((m_mousePos.x - 10) / 10) + 1;
 			delete m_pCloth;
-			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 		}
 
 		// Cloth Width
@@ -501,7 +503,7 @@ void Game::UpdateSliders()
 			m_UISprites.at(1)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(1)->GetPosition().y));
 			m_clothWidth = ((m_mousePos.x - 10) / 10) + 1;
 			delete m_pCloth;
-			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 		}
 
 		// Wind Strength
@@ -516,6 +518,7 @@ void Game::UpdateSliders()
 		{
 			m_UISprites.at(22)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(22)->GetPosition().y));
 			m_stiffyness = ((m_mousePos.x - 10) / 100) + 0.5f;
+			m_pCloth->ChangeStiffness(m_stiffyness);
 		}
 
 		// Wind Reset
@@ -538,7 +541,8 @@ void Game::UpdateSliders()
 			m_clothLength = 15;
 			m_clothWidth = 15;
 			m_numOfHooks = 4;
-			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+			m_stiffyness = 1;
+			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 			m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
 			m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
 			m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
@@ -657,7 +661,7 @@ void Game::UpdateSliders()
 				if (m_clothWidth > 1)
 					--m_numOfHooks;
 				delete m_pCloth;
-				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 			}
 
 
@@ -670,7 +674,7 @@ void Game::UpdateSliders()
 				if (m_numOfHooks < m_clothWidth)
 					++m_numOfHooks;
 				delete m_pCloth;
-				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD]);
+				m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 			}
 
 			// Objects

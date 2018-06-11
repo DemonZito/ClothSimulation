@@ -4,7 +4,7 @@
 
 Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _shader, float _stiffness)
 	:
-	m_fStiffness(_stiffness)
+	m_fStiffness(_stiffness),
 	m_iWidth(_pointDensityX),
 	m_iHeight(_pointDensityY),
 	Object(_shader)
