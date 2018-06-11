@@ -175,19 +175,20 @@ bool Game::Initialize()
 	strImagePaths.push_back("Resources/Textures/skybox1/front.tga");
 	m_vecObjects.push_back(std::make_unique<Skybox>(strImagePaths, g_mapShaders[SKYBOX]));
 
-	// Create objects and player
-	//m_pPlayer = std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Bullet.obj");
+	// Create Floor
+	Monster* mon;
 
+	m_vecObjects.push_back(std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/rug.obj"));
+	mon = dynamic_cast<Monster*>(m_vecObjects.at(m_vecObjects.size() - 1).get());
+	mon->SetPosition(glm::vec3(0.0f, -30.5f, 0.0f));
+	mon->SetScale(glm::vec3(200.0f, 1.0f, 200.0f));
+	//m_vecObjects.push_back(std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Oriental_rug_01.obj"));
+	//dynamic_cast<Monster>(m_vecObjects.at(m_vecObjects.size() - 1))->SetPosition(glm::vec3(0.0f, -30.0f, 0.0f));
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
 
 	m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
+	//mon->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	//m_vecObjects.push_back(std::make_unique<Pyramid>(g_mapShaders[UNLIT_MODEL]));
-	//m_pPyramid = dynamic_cast<Pyramid*>(m_vecObjects[m_vecObjects.size() - 1].get());
-	//m_pPyramid->SetPosition(glm::vec3(0.0f, -10.0f, -10.0f));
-	//m_pPyramid->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-	// Create Floor
-	
 	//UI Stuff
 	m_UIText.push_back(new Text(glm::vec2(520, 190),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Wind:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 	m_UIText.push_back(new Text(glm::vec2(520, 170),glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Change Direction:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));

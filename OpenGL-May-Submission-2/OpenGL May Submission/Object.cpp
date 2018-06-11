@@ -25,6 +25,11 @@ Model Object::GetModel()
 	return *m_pModel.get();
 }
 
+void Object::SetScale(glm::vec3 scale)
+{
+	m_scale = scale;
+}
+
 void Object::Render()
 {
 	glUseProgram(m_shader);
