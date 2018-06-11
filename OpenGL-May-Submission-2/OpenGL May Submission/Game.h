@@ -46,6 +46,8 @@ private:
 
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
+	void ProcessMouseInteract();
+
 
 	// Private member variables
 private:
@@ -86,6 +88,6 @@ private:
 	glm::vec4 m_screenPoint;
 	glm::vec3 m_offset;
 
-	MouseMode m_mouseMode = BURN;
+	MouseMode m_mouseMode = PULL;
 };
 

@@ -22,6 +22,7 @@ public:
 	std::vector<Triangle*> GetTriangles();
 	Point* GetPoint(int _x, int _y);
 	void MakeSpring(Point* _point1, Point* _point2, float _restingDistance);
+	void Tear(Point * _pt);
 	void PushCloth(Point* _pt, glm::vec3 _direction);
 	void windForce(const glm::vec3 direction);
 	glm::vec3 CalculateTriangleNormal(Point *_p0, Point *_p1, Point* _p2);
