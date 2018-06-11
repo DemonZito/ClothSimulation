@@ -87,6 +87,7 @@ private:
 	bool m_mouseCameraControl; // The bool to check if the mouse should lock with the camera
 	bool m_mouseLockButtonDown; // Bool check so you dont press buttons more than once
 	bool m_mouseClickDown; // Bool check so you dont press buttons more than once
+	bool m_xrayMode;
 
 	Point* m_pGrabbedPoint = nullptr;
 	Triangle* m_pTriangle = nullptr;
