@@ -230,6 +230,7 @@ bool Game::Initialize()
 	m_UIText.push_back(new Text(glm::vec2(540, 690), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Pyramid", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UIText.push_back(new Text(glm::vec2(10, 590), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Cloth Stiffness:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
+	m_UIText.push_back(new Text(glm::vec2(10, 550), glm::vec2(0.55f, 0.55f), glm::vec3(1, 1, 1), "Hook Distance:", "Resources/Fonts/absender1.ttf", g_mapShaders[TEXT]));
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
@@ -267,6 +268,10 @@ bool Game::Initialize()
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(80, 215), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Cloth stiffness
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 765), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Pin
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(10, 565), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // XRay
+
+	// Hook distance
+	m_UISprites.push_back(new Sprite("Resources/Textures/Minus.png", glm::vec2(140, 235), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Minus							
+	m_UISprites.push_back(new Sprite("Resources/Textures/Plus.png", glm::vec2(170, 235), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Plus
 
 	while (!glfwWindowShouldClose(m_pWindow) && !m_bGameOver)
 	{
@@ -389,20 +394,15 @@ void Game::HandleKeyboardInput()
 
 		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
-			m_pCloth->MoveCurtain(0.01f);
 		}
 		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
-			//m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
-			m_pCloth->MoveCurtain(-0.01f);
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
-			//m_pCloth->MoveClothPoint(glm::vec3(0, 0, 1));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
-			//m_pCloth->MoveClothPoint(glm::vec3(0, 0, -1));
 		}
 	}
 
@@ -735,6 +735,23 @@ void Game::UpdateSliders()
 			m_mouseMode = PIN;
 		}
 
+		// Hook Distance
+		if ((m_mousePos.x > m_UISprites.at(26)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(26)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(26)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(26)->GetPosition().y + 20))
+		{
+			m_pCloth->MoveCurtain(0.01f);
+		}
+		// Hook Distance
+		if ((m_mousePos.x > m_UISprites.at(27)->GetPosition().x)
+			&& (m_mousePos.x < m_UISprites.at(27)->GetPosition().x + 20)
+			&& (m_mousePos.y > m_UISprites.at(27)->GetPosition().y)
+			&& (m_mousePos.y < m_UISprites.at(27)->GetPosition().y + 20))
+		{
+			m_pCloth->MoveCurtain(-0.01f);
+		}
+
 		if (!m_mouseClickDown)
 		{
 			m_mouseClickDown = true;
@@ -787,11 +804,20 @@ void Game::UpdateSliders()
 				for (int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pSphere = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pPyramid)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pPyramid = nullptr;
+					}
 					else if (m_vecObjects.at(i).get() == m_pCapsule)
+					{
 						m_vecObjects.erase(m_vecObjects.begin() + i);
+						m_pCapsule = nullptr;
+					}
 					else
 						i++;
 				}
