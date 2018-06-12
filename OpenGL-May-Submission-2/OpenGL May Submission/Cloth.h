@@ -21,6 +21,8 @@ public:
 	void Step();
 	void Render();
 
+	void MoveCurtain(float direction);
+
 	std::vector<Triangle*> GetTriangles();
 	Point* GetPoint(int _x, int _y);
 	void MakeSpring(Point* _point1, Point* _point2, float _restingDistance);

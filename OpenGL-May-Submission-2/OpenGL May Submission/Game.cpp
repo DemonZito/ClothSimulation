@@ -97,8 +97,8 @@ bool Game::UpdateMousePicking()
 bool Game::Initialize()
 {
 	m_bGameOver = false;
-	m_windDirection = glm::vec3(0, 0, 0);
-	m_windStrength = 1.0f;
+	m_windDirection = glm::vec3(0, 0, 0.1f);
+	m_windStrength = 0.1f;
 	m_clothLength = 15;
 	m_clothWidth = 15;
 	m_numOfHooks = 4;
@@ -232,7 +232,7 @@ bool Game::Initialize()
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 55), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Length Knob
 	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(130, 95), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Width Knob
-	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(630, 755), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Wind Speed Knob
+	m_UISprites.push_back(new Sprite("Resources/Textures/Knob.png", glm::vec2(530, 755), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Wind Speed Knob
 
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(620, 775), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Reset Wind
 	m_UISprites.push_back(new Sprite("Resources/Textures/Skull.png", glm::vec2(60, 155), glm::vec2(20, 20), glm::vec3(1, 1, 1), g_mapShaders[SPRITE])); // Reset Cloth
@@ -388,11 +388,12 @@ void Game::HandleKeyboardInput()
 
 		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
-			//m_pCloth->MoveClothPoint(glm::vec3(0.1f, 0, 0));
+			m_pCloth->MoveCurtain(0.01f);
 		}
 		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
 			//m_pCloth->MoveClothPoint(glm::vec3(-0.1f, 0, 0));
+			m_pCloth->MoveCurtain(-0.01f);
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
 			m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
@@ -488,8 +489,8 @@ void Game::HandleKeyboardInput()
 	if (Input::Instance().GetKeyDown(GLFW_KEY_R)) {
 		delete m_pCloth;
 		m_bGameOver = false;
-		m_windDirection = glm::vec3(0, 0, 0);
-		m_windStrength = 1.0f;
+		m_windDirection = glm::vec3(0, 0, 0.1f);
+		m_windStrength = 0.1f;
 		m_clothLength = 15;
 		m_clothWidth = 15;
 		m_numOfHooks = 4;
@@ -600,7 +601,9 @@ void Game::UpdateSliders()
 			&& (m_mousePos.y > m_UISprites.at(3)->GetPosition().y) 
 			&& (m_mousePos.y < m_UISprites.at(3)->GetPosition().y + 20))
 		{
-			m_windDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+			m_windDirection = glm::vec3(0, 0, 0.1f);
+			m_windStrength = 0.1f;
+			m_UISprites.at(2)->SetPosition(glm::vec2(530, m_UISprites.at(2)->GetPosition().y));
 		}
 
 		// Reset Cloth

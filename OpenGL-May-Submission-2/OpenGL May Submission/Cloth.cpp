@@ -307,6 +307,23 @@ void Cloth::Render()
 	}
 }
 
+float lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
+}
+
+void Cloth::MoveCurtain(float direction)
+{
+	for (auto point = m_points.begin(); point != m_points.end(); point++)
+	{
+		if (point->GetFixed() && point->GetPosition().x != 0)
+		{
+			glm::vec3 pos = point->GetPosition();
+			point->SetPos(glm::vec3(lerp(pos.x, 0.0f, direction), pos.y, pos.z));
+		}
+	}
+}
+
 std::vector<Triangle*> Cloth::GetTriangles()
 {
 	return m_vecTriangles;
