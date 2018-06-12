@@ -110,8 +110,9 @@ bool Game::Initialize()
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	m_pWindow = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Summative 2", NULL, NULL);
+	m_pWindow = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Cloth simulation - by Jack Mair and Madeleine Day", NULL, NULL);
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetCursor(m_pWindow, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
 
