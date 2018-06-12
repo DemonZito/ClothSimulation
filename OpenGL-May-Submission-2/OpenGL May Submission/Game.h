@@ -3,7 +3,7 @@
 #include "GlobalIncludes.h"
 #include "Skybox.h"
 #include "PostProcessing.h"
-#include "Monster.h"
+#include "Floor.h"
 #include "Camera.h"
 #include "Cloth.h"
 #include "Sphere.h"
@@ -59,15 +59,11 @@ private:
 	glm::vec2 m_prevMousePos;
 	glm::vec3 m_mouseRayDirection;
 
-	//std::unique_ptr<PostProcessing> m_pPostProcessing;
-	std::unique_ptr<Monster> m_pPlayer;
-
+	Floor* m_pFloor;
 	Cloth* m_pCloth;
 	Sphere* m_pSphere;
 	Pyramid* m_pPyramid;
 	Capsule* m_pCapsule;
-	//Sprite* sprit;
-	//Slider* m_testSlider;
 
 	std::vector<Text*> m_UIText;
 	std::vector<Sprite*> m_UISprites;

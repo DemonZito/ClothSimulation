@@ -9,8 +9,10 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 	m_iHeight(_pointDensityY),
 	Object(_shader)
 {
+	// Resize vector to dimensions of width and height
 	m_points.resize(_pointDensityX * _pointDensityY);
 
+	// Loop through width and height and create a new point at that position
 	for (int x = 0; x < _pointDensityX; x++)
 	{
 		for (int y = 0; y < _pointDensityY; y++)
@@ -21,15 +23,21 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 		}
 	}
 
+	// Set up triangles and add appropriate points
 	int k = 0;
 	for (int y = 0; y < (_pointDensityY - 1); y++)
 	{
 		for (int x = 0; x < (_pointDensityX - 1); x++)
 		{
+			// Add new triangle to vector
 			m_vecTriangles.push_back(new Triangle(_shader, k));
+			
+			// Add correct points
 			m_vecTriangles[k]->AddPoint(&m_points[y * _pointDensityX + x]);
 			m_vecTriangles[k]->AddPoint(&m_points[y * _pointDensityX + (x + 1)]);
 			m_vecTriangles[k]->AddPoint(&m_points[(y + 1) * _pointDensityX + x]);
+
+			// Init graphics
 			m_vecTriangles[k]->GLInit();
 			k++;
 
@@ -42,40 +50,23 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 		}
 	}
 
+	// Setup spring constraints 
 	for (int x = 0; x < _pointDensityX; x++)
 	{
 		for (int y = 0; y < _pointDensityY; y++)
 		{
-			if (x < _pointDensityX - 1)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y), 0);
-				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y));
-				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y));
-			}
-			if (y < _pointDensityY - 1)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x, y + 1), 0);
-				//GetPoint(x, y)->AddLink(GetPoint(x, y + 1));
-				//GetPoint(x, y + 1)->AddLink(GetPoint(x, y));
-
-			}
-			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
-			{
-				MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1), 0);
-				//GetPoint(x, y)->AddLink(GetPoint(x + 1, y + 1));
-				//GetPoint(x + 1, y + 1)->AddLink(GetPoint(x, y));
-
-			}
-			if (x < _pointDensityX - 1 && y < _pointDensityY - 1)
-			{
-				MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1), 0);
-				//GetPoint(x + 1, y)->AddLink(GetPoint(x, y + 1));
-				//GetPoint(x, y + 1)->AddLink(GetPoint(x + 1, y));
-
-			}
+			// Structural constraints
+			if (x < _pointDensityX - 1) MakeSpring(GetPoint(x, y), GetPoint(x + 1, y), 0);
+			if (y < _pointDensityY - 1) MakeSpring(GetPoint(x, y), GetPoint(x, y + 1), 0);
+			
+			// Shear constraints
+			if (x < _pointDensityX - 1 && y < _pointDensityY - 1) MakeSpring(GetPoint(x, y), GetPoint(x + 1, y + 1), 0);
+			if (x < _pointDensityX - 1 && y < _pointDensityY - 1) MakeSpring(GetPoint(x + 1, y), GetPoint(x, y + 1), 0);
+			
 		}
 	}
 
+	// Hook logic
 	if (numOfHooks % 2 == 1)
 	{
 		--numOfHooks;
@@ -88,6 +79,7 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 	if(numOfHooks != 1)
 		spaceBetweenHooks = glm::ceil(m_iWidth / (numOfHooks - 1));
 
+	// Loop and fix points
 	for (int i = 0; i < (numOfHooks / 2); ++i)
 	{
 		int place = i * spaceBetweenHooks;
@@ -103,7 +95,7 @@ Cloth::~Cloth()
 {
 }
 
-
+// Add force to all valid points
 void Cloth::AddForce(const glm::vec3 _force)
 {
 	for (int i = 0; i < m_vecTriangles.size(); i++)
@@ -125,6 +117,7 @@ void Cloth::FloorCollision()
 		{
 			if ((*pt)->GetPosition().y < -30.0f)
 			{
+				// If points below floor, repel upwards
 				float diff = (*pt)->GetPosition().y - -30;
 				(*pt)->ChangePos(glm::vec3(0, 0.05f, 0));
 			}
@@ -132,17 +125,7 @@ void Cloth::FloorCollision()
 	}
 }
 
-void Cloth::MoveClothPoint(glm::vec3 delta)
-{
-	GetPoint(1, 0)->SetFixed(false);
-	GetPoint(1, 0)->ChangePos(delta);
-	GetPoint(1, 0)->SetFixed(true);
-
-	GetPoint(m_iWidth - 1, 0)->SetFixed(false);
-	GetPoint(m_iWidth - 1, 0)->ChangePos(-delta);
-	GetPoint(m_iWidth - 1, 0)->SetFixed(true);
-}
-
+// Sphere collision, repel point proportional to penetration depth
 void Cloth::ballCollision(const glm::vec3 center, const float radius)
 {
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
@@ -157,12 +140,14 @@ void Cloth::ballCollision(const glm::vec3 center, const float radius)
 	}
 }
 
+// Get distance
 float GetDist(glm::vec3 u, glm::vec3 v)
 {
 	glm::vec3 diff = u - v;
 	return glm::sqrt(glm::dot(diff, diff));
 }
 
+// Point and capsule collision
 void Cloth::CapsuleCollision(glm::vec3 pt1, glm::vec3 pt2, float lengthsq, float radius)
 {
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
@@ -171,36 +156,33 @@ void Cloth::CapsuleCollision(glm::vec3 pt1, glm::vec3 pt2, float lengthsq, float
 			glm::vec3 w = (*point).GetPosition() - pt1;
 			float closestDistance = 0;
 
+			// Check line segment end 1
 			float c1 = dot(w, v);
 			if (c1 <= 0)
 			{
 				closestDistance = GetDist((*point).GetPosition(), pt1);
+
+				// Collision occurred
 				if (closestDistance < radius)
 				{
+					// Repell point
 					(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
 				}
 			}
 
+			// Check line segment end 2
 			float c2 = dot(v, v);
 			if (c2 <= c1)
 			{
 				closestDistance = GetDist((*point).GetPosition(), pt2);
 
+				// Collision occurred
 				if (closestDistance < radius)
 				{
+					// Repell point
 					(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
 				}
 			}
-
-			//float b = c1 / c2;
-			//glm::vec3 Pb = pt1 + b * v;
-			//closestDistance = GetDist((*point).GetPosition(), Pb);
-		
-			//if (closestDistance < radius)
-			//{
-			//	std::cout << closestDistance << std::endl;
-			//	//(*point).ChangePos(glm::normalize(w) * (radius - closestDistance));
-			//}
 	}
 }
 
@@ -221,28 +203,25 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 			if (result) // The point is not behind one of the plains, stop checking for collision
 				break;
 		}
+
 		// The point is intersecting with the pyramid
 		if (!result)
 		{
 			std::cout << "Pyramid Colliding" << std::endl;
-			//if((*point).m_oldestPosition != (*point).GetPosition())
-			//	(*point).SetPos((*point).m_oldestPosition);
-			//else
-			//{
-			//	glm::vec3 v = (*point).GetPosition() - center;
-			//	float l = glm::length(v);
-			//	(*point).ChangePos(glm::normalize(v) * (dProduct - l));
-			//}
 
 			glm::vec3 v = (*point).GetPosition() - center;
 			float l = glm::length(v);
+
+			// Repell point
 			(*point).ChangePos(glm::normalize(v) * (2.0f - l));
 		}
 	}
 }
 
+// Update method
 void Cloth::Step()
 {	
+	// Satisfy all constraints
 	for (int i = 0; i < g_kiConstraintIterations; i++)
 	{
 		for (auto constraint = m_springs.begin(); constraint != m_springs.end(); constraint++) {
@@ -250,6 +229,7 @@ void Cloth::Step()
 		}
 	}
 
+	// Update points and break those which are overextended
 	for (int x = 0; x < m_iWidth; x++)
 	{
 		for (int y = 0; y < m_iHeight; y++)
@@ -262,11 +242,13 @@ void Cloth::Step()
 		}
 	}
 
+	// Update all detached points
 	for (auto point = m_detachedPoints.begin(); point != m_detachedPoints.end(); point++)
 	{
 		(*point)->Step();
 	}
 
+	// Update triangles and graphics of vertices based on the points
 	for (int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		m_vecTriangles[i]->Step();
@@ -275,12 +257,13 @@ void Cloth::Step()
 
 void Cloth::Render()
 {
+	// reset light normals
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
 	{
 		(*point).ResetNormals();
 	}
 
-	//create smooth per particle normals by adding up all the (hard) triangle normals that each particle is part of
+	// Update normals and fix lighting each frame
 	for (int x = 0; x<m_iWidth - 1; x++)
 	{
 		for (int y = 0; y<m_iHeight - 1; y++)
@@ -299,19 +282,20 @@ void Cloth::Render()
 
 	glUseProgram(m_shader);
 
-	//
-
+	// Render each triangle
 	for (int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		m_vecTriangles[i]->Render();
 	}
 }
 
+// Linearly interpolate
 float lerp(float a, float b, float f)
 {
 	return a + f * (b - a);
 }
 
+// Lerp curtain hooks closer or further away from eachother
 void Cloth::MoveCurtain(float direction)
 {
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
@@ -334,6 +318,7 @@ Point* Cloth::GetPoint(int _x, int _y)
 	return &m_points[_y * m_iWidth + _x]; 
 }
 
+// Create constraint here, add links for self collision
 void Cloth::MakeSpring(Point* _point1, Point* _point2, float _restingDistance)
 {
 	 m_springs.push_back(Spring(_point1, _point2, _restingDistance, m_fStiffness));
@@ -341,16 +326,22 @@ void Cloth::MakeSpring(Point* _point1, Point* _point2, float _restingDistance)
 	 _point2->AddLink(_point1);
 }
 
+
+// Detach point here
 void Cloth::Tear(Point* _pt)
 {
+	// If not already detached
 	if (!_pt->GetDetached())
 	{
 		_pt->m_bOverExtended = false;
+
+		// Loop through each triangle this point belongs to and remove it
 		for (int triangle = 0; triangle < _pt->m_iTriangleIdx.size(); triangle++)
 		{
 			Point temp = *_pt;
 			std::vector<Point*> points = m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->GetPoints();
 
+			// Remove the point
 			for (int i = 0; i < 3; i++)
 			{
 				if (points[i] == _pt)
@@ -360,19 +351,14 @@ void Cloth::Tear(Point* _pt)
 				}
 			}
 
+			// Create new detached point
 			Point* newPoint = new Point(temp.GetPosition());
 			newPoint->SetDetached(true);
 			newPoint->m_iTriangleIdx = temp.m_iTriangleIdx;
 
-			if (!points[0]->GetDetached())
-			{
-				MakeSpring(points[0], newPoint, 1.0f);
-			}
-
-			if (!points[1]->GetDetached())
-			{
-				MakeSpring(points[1], newPoint, 1.0f);
-			}
+			// Fix constraints between this triangle
+			if (!points[0]->GetDetached()) { MakeSpring(points[0], newPoint, 1.0f); }
+			if (!points[1]->GetDetached()) { MakeSpring(points[1], newPoint, 1.0f); }
 
 			if (points[0]->GetDetached() && points[1]->GetDetached())
 			{
@@ -380,17 +366,20 @@ void Cloth::Tear(Point* _pt)
 				MakeSpring(points[1], newPoint, 1.0f);
 			}
 
-
+			// Readd the point to the triangle vector
 			points.push_back(newPoint);
 
+			// Reset points and fix triangle
 			m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->ResetPoints();
 			for (int i = 0; i < 3; i++)
 			{
 				m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->AddPoint(points[i]);
 			}
 
+			// Add new point to detached points
 			m_detachedPoints.push_back(newPoint);
 
+			// Break old and now invalid constraints to this point
 			for (auto constraint = m_springs.begin(); constraint != m_springs.end(); constraint++) {
 				if ((*constraint).m_pPoint1 == _pt)
 				{
@@ -410,6 +399,7 @@ void Cloth::Tear(Point* _pt)
 
 void Cloth::PushCloth(Triangle* _tri, glm::vec3 _direction)
 {
+	// Push all points in the triangle
 	std::vector<Point*> points = _tri->GetPoints();
 	points[0]->AddForce(_direction * 10.0f);
 	points[1]->AddForce(_direction * 10.0f);
@@ -417,6 +407,7 @@ void Cloth::PushCloth(Triangle* _tri, glm::vec3 _direction)
 
 }
 
+// Add wind to all points
 void Cloth::windForce(const glm::vec3 direction)
 {
 	for (int i = 0; i < m_vecTriangles.size(); ++i)
@@ -425,6 +416,7 @@ void Cloth::windForce(const glm::vec3 direction)
 	}
 }
 
+// Calculate normal for lighting
 glm::vec3 Cloth::calcTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
 {
 	glm::vec3 pos1 = _p0->GetPosition();
@@ -437,6 +429,7 @@ glm::vec3 Cloth::calcTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
 	return glm::cross(v1, v2);
 }
 
+// Add wind forces to each triangle
 void Cloth::addWindForcesForTriangle(Triangle* triangle, const glm::vec3 direction)
 {
 	std::vector<Point*> points = triangle->GetPoints();
@@ -457,6 +450,7 @@ glm::vec3 Cloth::CalculateTriangleNormal(Point * _p0, Point * _p1, Point * _p2)
 	return glm::cross(v1, v2);
 }
 
+// Adjust stiffness of all constraints
 void Cloth::ChangeStiffness(float _stiffness)
 {
 	m_fStiffness = _stiffness;
@@ -479,17 +473,16 @@ void Cloth::SelfCollision()
 				// Cycle over all points in cloth
 				for (auto point = m_points.begin(); point != m_points.end(); point++)
 				{
-					//Check if the point is detatched
-					//if (point->GetDetached())
-					//	continue;
 					// Check it isnt itself
 					if (points.at(j) == &(*point))
 						continue;
 
 					bool isConnected = false;
+
 					// Check it isnt a point connected to self
 					std::vector<Point*> links = points.at(j)->GetLinks();
 
+					// Check if this is a link to this point, if so, don't collide
 					for (int k = 0; k < links.size(); ++k)
 					{
 						if (links.at(k) == &(*point))
@@ -499,6 +492,8 @@ void Cloth::SelfCollision()
 					}
 					if (isConnected)
 						continue;
+
+					// Do sphere collision
 					glm::vec3 v = points.at(j)->GetPosition() - point->GetPosition();
 					float l = glm::length(v);
 

@@ -21,13 +21,15 @@ void Point::Step()
 {
 	if (!m_bFixed)
 	{
+		// Integration to new position using verlet
 		glm::vec3 temp = m_position;
-		m_position = m_position + 0.99f * (m_position - m_oldPosition) + (m_acceleration * pow(g_kfTimeStep, 2));//m_position + (m_position - m_oldPosition) * (1.0f - 0.01f) + m_acceleration * g_kfTimeStep;
+		m_position = m_position + 0.99f * (m_position - m_oldPosition) + (m_acceleration * pow(g_kfTimeStep, 2));
 		m_oldestPosition = m_oldPosition;
 		m_oldPosition = temp;
 		m_acceleration = glm::vec3(0, 0, 0); // acceleration is reset since it HAS been translated into a change in position (and implicitely into velocity)	
 	}
 
+	// Handle burning
 	if (m_bBurning && m_fBurnMeter > 0)
 		m_fBurnMeter -= GenerateRandomFloat(0.0f, 0.01f);
 	else if (!m_bOverExtended && !m_bDetached && m_bBurning && m_fBurnMeter <= 0)
@@ -115,6 +117,5 @@ void Point::RemoveLink(Point* _link)
 
 void Point::RevertFixedState()
 {
-	std::cout << "old fixed is: " << m_bOldFixed << std::endl;
 	m_bFixed = m_bOldFixed;
 }

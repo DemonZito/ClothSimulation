@@ -14,7 +14,6 @@ public:
 
 	void AddForce(const glm::vec3 _force);
 	void FloorCollision();
-	void MoveClothPoint(glm::vec3 delta);
 	void ballCollision(const glm::vec3 center, const float radius);
 	void CapsuleCollision(glm::vec3 pt1, glm::vec3 pt2, float lengthsq, float radius_sq);
 	void pyramidCollision(const glm::vec3 center, Model pyramid);

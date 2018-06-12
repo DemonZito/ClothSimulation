@@ -6,6 +6,7 @@ Capsule::Capsule(GLuint _shader)
 	:
 	Object(_shader)
 {
+	// Load capsule model
 	m_pModel = std::make_unique<Model>("Resources/Models/Bullet.obj", _shader);
 }
 

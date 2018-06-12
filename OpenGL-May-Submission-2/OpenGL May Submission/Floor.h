@@ -4,12 +4,12 @@
 #include "Object.h"
 #include "Model.h"
 
-class Monster :
+class Floor :
 	public Object
 {
 public:
-	Monster(GLuint _shader, const char* path);
-	~Monster();
+	Floor(GLuint _shader, const char* path);
+	~Floor();
 
 	void SetPosition(glm::vec3);
 	glm::vec3 GetPosition();

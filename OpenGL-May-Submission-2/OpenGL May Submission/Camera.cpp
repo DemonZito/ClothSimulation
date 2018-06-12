@@ -2,6 +2,7 @@
 
 CCamera::CCamera()
 {
+	// Initial camera values
 	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	m_cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -19,6 +20,7 @@ void CCamera::GetUniformLocation(GLuint _shaders)
 {
 }
 
+// Send data from camera to shaders
 void CCamera::SendDataToShaders(std::unordered_map<ShaderType, GLuint> _shaders)
 {
 	float aspectRatio = static_cast<float>(WINDOW_WIDTH / WINDOW_HEIGHT);

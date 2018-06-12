@@ -66,10 +66,6 @@ bool Game::UpdateMousePicking()
 		{
 			glm::vec3 outIntersectionPoint = m_pCamera->GetPosition() + m_mouseRayDirection * t;
 
-			std::cout << "x: " << outIntersectionPoint.x << ", ";
-			std::cout << "y: " << outIntersectionPoint.y << ", ";
-			std::cout << "z: " << outIntersectionPoint.z << std::endl;
-
 			Point* closest = nullptr;
 			float smallestDist = 100000;
 			for (int ptIdx = 0; ptIdx < 3; ptIdx++)
@@ -178,12 +174,10 @@ bool Game::Initialize()
 	m_vecObjects.push_back(std::make_unique<Skybox>(strImagePaths, g_mapShaders[SKYBOX]));
 
 	// Create Floor
-	Monster* mon;
-
-	m_vecObjects.push_back(std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/rug.obj"));
-	mon = dynamic_cast<Monster*>(m_vecObjects.at(m_vecObjects.size() - 1).get());
-	mon->SetPosition(glm::vec3(0.0f, -30.5f, 0.0f));
-	mon->SetScale(glm::vec3(200.0f, 1.0f, 200.0f));
+	m_vecObjects.push_back(std::make_unique<Floor>(g_mapShaders[UNLIT_MODEL], "Resources/Models/rug.obj"));
+	m_pFloor = dynamic_cast<Floor*>(m_vecObjects.at(m_vecObjects.size() - 1).get());
+	m_pFloor->SetPosition(glm::vec3(0.0f, -30.5f, 0.0f));
+	m_pFloor->SetScale(glm::vec3(200.0f, 1.0f, 200.0f));
 	//m_vecObjects.push_back(std::make_unique<Monster>(g_mapShaders[UNLIT_MODEL], "Resources/Models/Oriental_rug_01.obj"));
 	//dynamic_cast<Monster>(m_vecObjects.at(m_vecObjects.size() - 1))->SetPosition(glm::vec3(0.0f, -30.0f, 0.0f));
 	//m_pPlayer->SetPosition(glm::vec3(-10.0f, -7.0f, 0.0f));
@@ -387,64 +381,64 @@ void Game::HandleKeyboardInput()
 {
 	if (m_pSphere != nullptr)
 	{
-		glm::vec3 monsterPos = m_pSphere->GetPosition();
+		glm::vec3 spherePos = m_pSphere->GetPosition();
 
 		// Movement of the monster/player
-		float monsterY = -10.0f;
+		float shapeY = -10.0f;
 
 		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
-			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+			m_pSphere->SetPosition(glm::vec3(spherePos.x, shapeY, spherePos.z + 0.1f));
 		}
 		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
-			m_pSphere->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+			m_pSphere->SetPosition(glm::vec3(spherePos.x, shapeY, spherePos.z - 0.1f));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
-			m_pSphere->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+			m_pSphere->SetPosition(glm::vec3(spherePos.x + 0.1f, shapeY, spherePos.z));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
-			m_pSphere->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+			m_pSphere->SetPosition(glm::vec3(spherePos.x - 0.1f, shapeY, spherePos.z));
 		}
 	}
 
 	if (m_pPyramid != nullptr)
 	{
-		glm::vec3 monsterPos = m_pPyramid->GetPosition();
+		glm::vec3 pyramidPos = m_pPyramid->GetPosition();
 
 		// Movement of the monster/player
-		float monsterY = -10.0f;
+		float shapeY = -10.0f;
 
 		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
-			m_pPyramid->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+			m_pPyramid->SetPosition(glm::vec3(pyramidPos.x, shapeY, pyramidPos.z + 0.1f));
 		}
 		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
-			m_pPyramid->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+			m_pPyramid->SetPosition(glm::vec3(pyramidPos.x, shapeY, pyramidPos.z - 0.1f));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
-			m_pPyramid->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+			m_pPyramid->SetPosition(glm::vec3(pyramidPos.x + 0.1f, shapeY, pyramidPos.z));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
-			m_pPyramid->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+			m_pPyramid->SetPosition(glm::vec3(pyramidPos.x - 0.1f, shapeY, pyramidPos.z));
 		}
 	}
 
 	if (m_pCapsule != nullptr)
 	{
-		glm::vec3 monsterPos = m_pCapsule->GetPosition();
+		glm::vec3 capsulePos = m_pCapsule->GetPosition();
 
 		// Movement of the monster/player
-		float monsterY = -10.0f;
+		float shapeY = -10.0f;
 
 		if (Input::Instance().GetKeyDown(GLFW_KEY_UP)) {
-			m_pCapsule->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z + 0.1f));
+			m_pCapsule->SetPosition(glm::vec3(capsulePos.x, shapeY, capsulePos.z + 0.1f));
 		}
 		if (Input::Instance().GetKeyDown(GLFW_KEY_DOWN)) {
-			m_pCapsule->SetPosition(glm::vec3(monsterPos.x, monsterY, monsterPos.z - 0.1f));
+			m_pCapsule->SetPosition(glm::vec3(capsulePos.x, shapeY, capsulePos.z - 0.1f));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_LEFT)) {
-			m_pCapsule->SetPosition(glm::vec3(monsterPos.x + 0.1f, monsterY, monsterPos.z));
+			m_pCapsule->SetPosition(glm::vec3(capsulePos.x + 0.1f, shapeY, capsulePos.z));
 
 		}if (Input::Instance().GetKeyDown(GLFW_KEY_RIGHT)) {
-			m_pCapsule->SetPosition(glm::vec3(monsterPos.x - 0.1f, monsterY, monsterPos.z));
+			m_pCapsule->SetPosition(glm::vec3(capsulePos.x - 0.1f, shapeY, capsulePos.z));
 		}
 	}
 
