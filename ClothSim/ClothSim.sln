@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL May Submission", "OpenGL May Submission\OpenGL May Submission.vcxproj", "{4621F6EF-7020-4BA8-95FB-A474697B9FCD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClothSim", "ClothSim\ClothSim.vcxproj", "{4621F6EF-7020-4BA8-95FB-A474697B9FCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F50BDCFB-D3EC-44A4-B448-C6FC62A88A32}
+		SolutionGuid = {4012A1AA-648C-4277-A9C8-3BC5D1772640}
 	EndGlobalSection
 EndGlobal

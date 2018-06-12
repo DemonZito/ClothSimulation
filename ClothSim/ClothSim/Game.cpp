@@ -293,19 +293,19 @@ void Game::Render() const
 
 	m_pCamera->SendDataToShaders(g_mapShaders);
 
-	for (int i = 0; i < m_vecObjects.size(); i++)
+	for (unsigned int i = 0; i < m_vecObjects.size(); i++)
 		m_vecObjects[i]->Render();
 
 	m_pCloth->Render();
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	for (int i = 0; i < m_UIText.size(); ++i)
+	for(unsigned int i = 0; i < m_UIText.size(); ++i)
 	{
 		m_UIText.at(i)->Render();
 	}
 
-	for (int i = 0; i < m_UISprites.size(); ++i)
+	for (unsigned int i = 0; i < m_UISprites.size(); ++i)
 	{
 		m_UISprites.at(i)->Render();
 	}
@@ -561,7 +561,7 @@ void Game::UpdateSliders()
 		if (m_mousePos.x > 10 && m_mousePos.x < 300 && m_mousePos.y > 55 && m_mousePos.y < 75)
 		{
 			m_UISprites.at(0)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(0)->GetPosition().y));
-			m_clothLength = ((m_mousePos.x - 10) / 10) + 1;
+			m_clothLength = (int)glm::ceil((m_mousePos.x - 10) / 10) + 1;
 			delete m_pCloth;
 			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 		}
@@ -570,7 +570,7 @@ void Game::UpdateSliders()
 		if (m_mousePos.x > 10 && m_mousePos.x < 300 && m_mousePos.y > 95 && m_mousePos.y < 115)
 		{
 			m_UISprites.at(1)->SetPosition(glm::vec2(m_mousePos.x - 10, m_UISprites.at(1)->GetPosition().y));
-			m_clothWidth = ((m_mousePos.x - 10) / 10) + 1;
+			m_clothWidth = (int)glm::ceil((m_mousePos.x - 10) / 10) + 1;
 			delete m_pCloth;
 			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 		}
@@ -616,7 +616,7 @@ void Game::UpdateSliders()
 			m_pCloth = new Cloth(m_clothWidth, m_clothLength, m_numOfHooks, g_mapShaders[UNLIT_STANDARD], m_stiffyness);
 			m_UISprites.at(0)->SetPosition(glm::vec2(130, 55));
 			m_UISprites.at(1)->SetPosition(glm::vec2(130, 95));
-			m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
+			//m_UISprites.at(2)->SetPosition(glm::vec2(630, 755));
 			m_UISprites.at(23)->SetPosition(glm::vec2(80, 215));
 		}
 
@@ -795,7 +795,7 @@ void Game::UpdateSliders()
 				&& (m_mousePos.y > m_UISprites.at(19)->GetPosition().y)
 				&& (m_mousePos.y < m_UISprites.at(19)->GetPosition().y + 20))
 			{
-				for (int i = 0; i < m_vecObjects.size();)
+				for (unsigned int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
 					{
@@ -822,7 +822,7 @@ void Game::UpdateSliders()
 				&& (m_mousePos.y > m_UISprites.at(20)->GetPosition().y)
 				&& (m_mousePos.y < m_UISprites.at(20)->GetPosition().y + 20))
 			{
-				for (int i = 0; i < m_vecObjects.size();)
+				for (unsigned int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
 					{
@@ -855,7 +855,7 @@ void Game::UpdateSliders()
 				&& (m_mousePos.y > m_UISprites.at(21)->GetPosition().y)
 				&& (m_mousePos.y < m_UISprites.at(21)->GetPosition().y + 20))
 			{
-				for (int i = 0; i < m_vecObjects.size();)
+				for (unsigned int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
 					{
@@ -888,7 +888,7 @@ void Game::UpdateSliders()
 				&& (m_mousePos.y > m_UISprites.at(22)->GetPosition().y)
 				&& (m_mousePos.y < m_UISprites.at(22)->GetPosition().y + 20))
 			{
-				for (int i = 0; i < m_vecObjects.size();)
+				for (unsigned int i = 0; i < m_vecObjects.size();)
 				{
 					if (m_vecObjects.at(i).get() == m_pSphere)
 					{

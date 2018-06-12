@@ -56,7 +56,7 @@ public:
 	std::vector<std::vector<Vertex>> GetTriangles()
 	{
 		std::vector<std::vector<Vertex>> triangles;
-		for (int i = 0; i < (meshes[0].indices.size() / 3); i++)
+		for (unsigned int i = 0; i < (meshes[0].indices.size() / 3); i++)
 		{
 			std::vector<Vertex> singleTriangle;
 			singleTriangle.push_back(meshes[0].vertices[i * 3]);

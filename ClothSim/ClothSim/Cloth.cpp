@@ -77,7 +77,7 @@ Cloth::Cloth(int _pointDensityX, int _pointDensityY, int numOfHooks, GLuint _sha
 	// Hooks
 	int spaceBetweenHooks = 0;
 	if(numOfHooks != 1)
-		spaceBetweenHooks = glm::ceil(m_iWidth / (numOfHooks - 1));
+		spaceBetweenHooks = (int)glm::ceil(m_iWidth / (numOfHooks - 1));
 
 	// Loop and fix points
 	for (int i = 0; i < (numOfHooks / 2); ++i)
@@ -98,7 +98,7 @@ Cloth::~Cloth()
 // Add force to all valid points
 void Cloth::AddForce(const glm::vec3 _force)
 {
-	for (int i = 0; i < m_vecTriangles.size(); i++)
+	for (unsigned int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
 		for (auto pt = points.begin(); pt != points.end(); pt++)
@@ -110,7 +110,7 @@ void Cloth::AddForce(const glm::vec3 _force)
 
 void Cloth::FloorCollision()
 {
-	for (int i = 0; i < m_vecTriangles.size(); i++)
+	for (unsigned int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		std::vector<Point*> points = m_vecTriangles[i]->GetPoints();
 		for (auto pt = points.begin(); pt != points.end(); pt++)
@@ -195,7 +195,7 @@ void Cloth::pyramidCollision(const glm::vec3 center, Model pyramid)
 	for (auto point = m_points.begin(); point != m_points.end(); point++)
 	{
 		bool result = false;
-		for (int i = 0; i < triangles.size(); ++i)
+		for (unsigned int i = 0; i < triangles.size(); ++i)
 		{
 			glm::vec3 v = (*point).GetPosition();
 			float dProduct = glm::dot(v, triangles.at(i).at(0).Normal) - glm::dot(triangles.at(i).at(0).Normal, (triangles.at(i).at(0).Position + center));
@@ -249,7 +249,7 @@ void Cloth::Step()
 	}
 
 	// Update triangles and graphics of vertices based on the points
-	for (int i = 0; i < m_vecTriangles.size(); i++)
+	for (unsigned int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		m_vecTriangles[i]->Step();
 	}
@@ -283,7 +283,7 @@ void Cloth::Render()
 	glUseProgram(m_shader);
 
 	// Render each triangle
-	for (int i = 0; i < m_vecTriangles.size(); i++)
+	for (unsigned int i = 0; i < m_vecTriangles.size(); i++)
 	{
 		m_vecTriangles[i]->Render();
 	}
@@ -336,7 +336,7 @@ void Cloth::Tear(Point* _pt)
 		_pt->m_bOverExtended = false;
 
 		// Loop through each triangle this point belongs to and remove it
-		for (int triangle = 0; triangle < _pt->m_iTriangleIdx.size(); triangle++)
+		for (unsigned int triangle = 0; triangle < _pt->m_iTriangleIdx.size(); triangle++)
 		{
 			Point temp = *_pt;
 			std::vector<Point*> points = m_vecTriangles[_pt->m_iTriangleIdx[triangle]]->GetPoints();
@@ -410,7 +410,7 @@ void Cloth::PushCloth(Triangle* _tri, glm::vec3 _direction)
 // Add wind to all points
 void Cloth::windForce(const glm::vec3 direction)
 {
-	for (int i = 0; i < m_vecTriangles.size(); ++i)
+	for (unsigned int i = 0; i < m_vecTriangles.size(); ++i)
 	{
 		addWindForcesForTriangle(m_vecTriangles.at(i), direction);
 	}
@@ -462,11 +462,11 @@ void Cloth::ChangeStiffness(float _stiffness)
 void Cloth::SelfCollision()
 {
 	// Cycle over all triangles
-	for (int i = 0; i < m_vecTriangles.size(); ++i)
+	for(unsigned int i = 0; i < m_vecTriangles.size(); ++i)
 	{
 		// Cycle over each point in a triangle
 		std::vector<Point*> points = m_vecTriangles.at(i)->GetPoints();
-		for (int j = 0; j < m_vecTriangles.at(i)->GetPoints().size(); ++j)
+		for (unsigned int j = 0; j < m_vecTriangles.at(i)->GetPoints().size(); ++j)
 		{
 			if (!points.at(j)->GetDetached())
 			{
@@ -483,7 +483,7 @@ void Cloth::SelfCollision()
 					std::vector<Point*> links = points.at(j)->GetLinks();
 
 					// Check if this is a link to this point, if so, don't collide
-					for (int k = 0; k < links.size(); ++k)
+					for (unsigned int k = 0; k < links.size(); ++k)
 					{
 						if (links.at(k) == &(*point))
 						{

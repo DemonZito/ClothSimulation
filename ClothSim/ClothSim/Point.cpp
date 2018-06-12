@@ -102,7 +102,7 @@ void Point::AddLink(Point* _link)
 
 void Point::RemoveLink(Point* _link)
 {
-	for (int i = 0; i < m_vecLinks.size();)
+	for (unsigned int i = 0; i < m_vecLinks.size();)
 	{
 		if(m_vecLinks[i] == _link)
 		{
